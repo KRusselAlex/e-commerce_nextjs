@@ -1,0 +1,18 @@
+.heroNav {
+    height: 48vh;
+    /* Default height for larger screens */
+}
+
+@media (max-width: 1024px) and (min-width: 601px) {
+    .heroNav {
+        height: 25vh;
+        /* Height for tablets */
+    }
+}
+
+@media (max-width:600px) {
+    .heroNav {
+        height: 45vh;
+        /* Height for mobile */
+    }
+}
