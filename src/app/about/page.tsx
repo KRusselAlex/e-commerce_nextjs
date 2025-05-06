@@ -11,12 +11,13 @@ export default function Contact() {
       <div className="heroNav bg-primary text-white">
         <Navbar />
         <div className="h-12"></div>
-        <div className="flex flex-col h-full w-full justify-center  p-2 items-center">
-          <h1 className=" text-xl md:text-4xl font-bold text-center mb-4">
-            About US
+        <div className="flex flex-col h-full w-full justify-center p-2 items-center">
+          <h1 className="text-xl md:text-4xl font-bold text-center mb-4">
+            À propos de nous
           </h1>
-          <p className="text-center  mb-8">
-            Discover the Story Behind A&apos;Space D: Where Anime Meets Fashion
+          <p className="text-center mb-8">
+            Découvrez l&apos;histoire derrière Store : où l&apos;innovation
+            rencontre l&apos;équipement de laboratoire
           </p>
         </div>
       </div>
