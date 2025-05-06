@@ -2,17 +2,32 @@ import React, { useState } from "react";
 import { Search } from "lucide-react";
 import ProductCard from "./productCard";
 
-const fakeProducts = [
-  { id: 1, name: "T-shirt Anime", price: "€29.99", image: "/gojod.jpeg" },
-  { id: 2, name: "Sweatshirt Manga", price: "€49.99", image: "/gojod.jpeg" },
-  { id: 3, name: "Casquette Otaku", price: "€19.99", image: "/gojod.jpeg" },
+const equipmentProducts = [
+  {
+    id: 1,
+    name: "Microscope optique",
+    price: "200,000 F CFA",
+    image: "/gojod.jpeg",
+  },
+  {
+    id: 2,
+    name: "Centrifugeuse",
+    price: "500,000 F CFA",
+    image: "/gojod.jpeg",
+  },
+  {
+    id: 3,
+    name: "Balance analytique",
+    price: "350,000 F CFA",
+    image: "/gojod.jpeg",
+  },
 ];
 
 const SearchBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
 
-  const filteredProducts = fakeProducts.filter((p) =>
+  const filteredProducts = equipmentProducts.filter((p) =>
     p.name.toLowerCase().includes(query.toLowerCase())
   );
 

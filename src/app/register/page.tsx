@@ -5,8 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaArrowLeft } from "react-icons/fa";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Logo from "@/components/logo/logo";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -24,12 +24,7 @@ export default function SignupPage() {
           >
             <FaArrowLeft size={24} />
           </button>
-          <Link
-            href="/"
-            className="absolute Sprite_Graffiti   top-4 right-4 text-primary  text-lg hover:underline"
-          >
-            A&apos;space
-          </Link>
+          <Logo />
           <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
             Create an Account
           </h2>

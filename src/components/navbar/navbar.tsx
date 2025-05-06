@@ -46,7 +46,7 @@ export default function Navbar() {
             >
               <Menu className="w-8 h-8" />
             </button>
-           <Logo />
+            <Logo />
           </div>
 
           {/* Center: Navigation (desktop only) */}
@@ -76,7 +76,7 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             <Link
               href="/auth/login"
-              className="hidden md:block hover:text-primary text-lg font-medium"
+              className="hidden md:block hover:text-secondary text-lg font-medium"
               prefetch={true}
             >
               Connexion

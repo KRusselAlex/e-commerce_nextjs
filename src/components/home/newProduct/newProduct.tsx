@@ -4,12 +4,14 @@ import CustomButton from "@/components/button/button";
 import CarouselSection from "@/components/home/newProduct/carouselProduct/carouselProduct";
 import { ChevronRight } from "lucide-react";
 
-const images = ["/meta.jpeg", "/l.jpeg", "/l.jpeg"];
+const images = ["/meta.jpeg", "/l.jpeg", "/kl.jpeg"];
 const content = {
-  title: "Category Of Product",
-  description: "Here we show our variety of accesosires.",
-  buttonText: "Visit Shop",
+  title: "Catégories d’Équipements",
+  description:
+    "Découvrez notre large gamme d’équipements et instruments de laboratoire.",
+  buttonText: "Voir la boutique",
 };
+
 
 export default function NewProductSection() {
   return (

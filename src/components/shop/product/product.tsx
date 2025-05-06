@@ -8,37 +8,38 @@ import Link from "next/link";
 
 const product = {
   id: 1,
-  name: "Elegant Dress",
-  category: "Dresses",
-  price: 50,
+  name: "Microscope optique",
+  category: "Microscopes",
+  price: 500,
   description:
-    "A stylish and elegant dress perfect for any occasion. Made from high-quality fabric for a comfortable fit.",
-  images: ["/gojod.jpeg", "/gojod.jpeg", "/gojod.jpeg"],
+    "Un microscope optique de haute précision, idéal pour les travaux de laboratoire en biologie et chimie. Offre une excellente qualité d’image et une grande durabilité.",
+  images: ["/microscope1.jpeg", "/microscope1.jpeg", "/microscope1.jpeg"],
 };
 
 const relatedProducts = [
   {
     id: 2,
-    name: "Summer Dress",
-    category: "Dresses",
-    price: 40,
+    name: "Centrifugeuse de laboratoire",
+    category: "Centrifugeuses",
+    price: 1200,
     image: "/gojod.jpeg",
   },
   {
     id: 3,
-    name: "Floral Dress",
-    category: "Dresses",
-    price: 45,
+    name: "Agitateur magnétique",
+    category: "Agitateurs",
+    price: 300,
     image: "/gojod.jpeg",
   },
   {
     id: 4,
-    name: "Evening Dress",
-    category: "Dresses",
-    price: 60,
+    name: "Balance analytique",
+    category: "Balances",
+    price: 800,
     image: "/gojod.jpeg",
   },
 ];
+
 
 interface ProductViewProps {
   productId: string;

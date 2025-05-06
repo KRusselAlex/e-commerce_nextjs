@@ -11,12 +11,12 @@ export default function Shop() {
       <div className="heroNav bg-primary text-white">
         <Navbar />
         <div className="h-12"></div>
-        <div className="flex flex-col h-full w-full justify-center  p-2 items-center">
-          <h1 className=" text-xl md:text-4xl font-bold text-center mb-4">
-            SHOP
+        <div className="flex flex-col h-full w-full justify-center p-2 items-center">
+          <h1 className="text-xl md:text-4xl font-bold text-center mb-4">
+            BOUTIQUE
           </h1>
-          <p className="text-center  mb-8">
-            DOUR PRODUCTs
+          <p className="text-center mb-8">
+            NOS PRODUITS D&apos;ÉQUIPEMENT DE LABORATOIRE
           </p>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import {
-  FaTshirt,
-  FaStore,
+  FaMicroscope,
+  FaFlask,
   FaHeadphonesAlt,
   FaShippingFast,
 } from "react-icons/fa";
@@ -9,31 +9,31 @@ import CardServices from "./card/card"; // Assurez-vous que le chemin est correc
 
 const services = [
   {
-    icon: <FaTshirt size={40} />,
-    title: "Streetwear Anime",
+    icon: <FaMicroscope size={40} />,
+    title: "Équipements de laboratoire",
     description:
-      "Améliorez votre garde-robe avec une mode street audacieuse inspirée des animes, conçue pour les vrais fans.",
+      "Découvrez des microscopes, centrifugeuses et autres appareils de pointe pour vos besoins scientifiques.",
     iconColor: "text-green-500",
   },
   {
-    icon: <FaStore size={40} />,
-    title: "Accessoires Anime Exclusifs",
+    icon: <FaFlask size={40} />,
+    title: "Produits chimiques et consommables",
     description:
-      "Des bandeaux aux sweats à capuche, exprimez votre passion avec des accessoires qui complètent votre style.",
+      "Un large choix de réactifs, verrerie et matériel pour la chimie, la biologie et la physique.",
     iconColor: "text-yellow-500",
   },
   {
     icon: <FaHeadphonesAlt size={40} />,
-    title: "Nous sommes là pour vous",
+    title: "Service client dédié",
     description:
-      "Une question ? Notre équipe support est toujours prête à vous aider, jour et nuit !",
+      "Une question ? Notre équipe support est toujours prête à vous aider, avec des conseils experts.",
     iconColor: "text-blue-500",
   },
   {
     icon: <FaShippingFast size={40} />,
-    title: "Livraison Ultra-Rapide",
+    title: "Livraison rapide et sécurisée",
     description:
-      "Recevez vos articles anime rapidement et en toute sécurité, pour montrer votre style sans attendre.",
+      "Recevez vos équipements et produits en toute sécurité, où que vous soyez.",
     iconColor: "text-red-500",
   },
 ];
@@ -41,18 +41,16 @@ const services = [
 export default function ServicesSection() {
   return (
     <section className="bg-primary ">
-      <div className="flex flex-col lg:flex-row gap-16 mx-auto text-center mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+      <div className="flex flex-col lg:flex-row gap-16 mx-auto text-center max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="lg:w-1/3 text-white text-center lg:text-left">
           <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-6">
-            A&apos;Space : Élevez votre streetwear avec des vibes anime
+            Store : Votre partenaire en matériel et fournitures de laboratoire
           </h2>
           <p className="text-base">
-            Entrez dans un monde où l&apos;anime rencontre la mode urbaine ! Chez
-            A&apos;Space, nous créons des vêtements audacieux et de haute
-            qualité qui vous permettent d&apos;afficher votre passion avec fierté.
-            Des designs exclusifs inspirés des animes aux styles urbains qui se
-            démarquent, notre collection est faite pour les vrais fans et les
-            trendsetters.
+            Bienvenue chez A&apos;Space, votre boutique en ligne spécialisée
+            dans les produits et équipements de laboratoire. Nous proposons des
+            solutions fiables et de qualité pour les professionnels et
+            passionnés des sciences.
           </p>
         </div>
 

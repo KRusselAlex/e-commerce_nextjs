@@ -10,31 +10,32 @@ import {
 } from "@/components/ui/carousel";
 import DressCard from "@/components/card/card"; // Import the DressCard component
 
-const dresses = [
+
+const equipments = [
   {
     imageUrl: "/o.jpeg",
-    title: "Elegant Evening Gown",
-    price: "$199.99",
+    title: "Centrifugeuse de laboratoire",
+    price: "780,000 F CFA",
   },
   {
     imageUrl: "/p.jpeg",
-    title: "Elegant Evening Gown",
-    price: "$199.99",
+    title: "Microscope optique",
+    price: "325,000 F CFA",
   },
   {
     imageUrl: "/o.jpeg",
-    title: "Elegant Evening Gown",
-    price: "$199.99",
+    title: "Balance analytique",
+    price: "520,000 F CFA",
   },
   {
     imageUrl: "/p.jpeg",
-    title: "Summer Floral Dress",
-    price: "$89.99",
+    title: "PH-mètre numérique",
+    price: "130,000 F CFA",
   },
   {
     imageUrl: "/o.jpeg",
-    title: "Classic Black Dress",
-    price: "$129.99",
+    title: "Agitateur magnétique",
+    price: "195,000 F CFA",
   },
 ];
 
@@ -66,7 +67,7 @@ export default function CarouselProduct() {
         }}
       >
         <CarouselContent className="">
-          {dresses.map((dress, index) => (
+          {equipments.map((dress, index) => (
             <CarouselItem
               key={index}
               className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/4 px-0 md:px-1"

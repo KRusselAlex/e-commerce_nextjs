@@ -2,10 +2,11 @@
 
 import CustomButton from "@/components/button/button";
 import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 const content = {
   title:
-    "Plongez dans votre univers anime : le streetwear rencontre l’esprit manga !",
+    "Découvrez l’excellence scientifique : votre boutique pour produits et équipements de laboratoire !",
 
   buttonText: "Commencer maintenant",
 };
@@ -18,12 +19,14 @@ export default function HeroSection() {
           {content.title}
         </h1>
         <div className="flex justify-center">
-          <CustomButton
-            icon={<ChevronRight size={20} />}
-            className="bg-primary text-white hover:bg-secondary hover:text-white"
-          >
-            {content.buttonText}
-          </CustomButton>
+          <Link href="/register">
+            <CustomButton
+              icon={<ChevronRight size={20} />}
+              className="bg-primary text-white hover:bg-secondary hover:text-white"
+            >
+              {content.buttonText}
+            </CustomButton>
+          </Link>
         </div>
       </div>
     </main>

@@ -16,7 +16,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ name, price, image }) => {
         <Image src={image} alt={name} layout="fill" objectFit="cover" />
       </div>
       <div className="ml-4 flex-1">
-        <h3 className="text-md font-semibold">{name}</h3>
+        <h3 className="text-md font-semibold text-black">{name}</h3>
         <div className="flex items-center text-sm text-gray-500">
           <Tag className="w-4 h-4 mr-1" />
           {price}

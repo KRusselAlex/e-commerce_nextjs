@@ -92,7 +92,7 @@ export default function AboutUs() {
           </h3>
           <Carousel>
             <CarouselContent>
-              {["/jinx.jpg", "/jinx.jpg", "/jinx.jpg", "/jinx.jpg"].map(
+              {["/gojod.jpeg", "/gojod.jpeg", "/gojod.jpeg", "/gojod.jpeg"].map(
                 (src, i) => (
                   <CarouselItem
                     key={i}
