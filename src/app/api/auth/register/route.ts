@@ -7,6 +7,7 @@ import { sendVerificationEmail } from '@/lib/emailUtils';
 import { UserTypes } from '@/types/user';
 import crypto from 'crypto';
 
+
 // Register a new user
 export async function POST(request: Request) {
     try {

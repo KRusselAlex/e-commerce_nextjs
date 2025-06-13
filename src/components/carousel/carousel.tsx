@@ -1,4 +1,5 @@
 "use client";
+
 import * as React from "react";
 import {
   Carousel,
@@ -8,81 +9,68 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import DressCard from "@/components/card/card"; // Import the DressCard component
-
-
-const equipments = [
-  {
-    imageUrl: "/o.jpeg",
-    title: "Centrifugeuse de laboratoire",
-    price: "780,000 F CFA",
-  },
-  {
-    imageUrl: "/p.jpeg",
-    title: "Microscope optique",
-    price: "325,000 F CFA",
-  },
-  {
-    imageUrl: "/o.jpeg",
-    title: "Balance analytique",
-    price: "520,000 F CFA",
-  },
-  {
-    imageUrl: "/p.jpeg",
-    title: "PH-mètre numérique",
-    price: "130,000 F CFA",
-  },
-  {
-    imageUrl: "/o.jpeg",
-    title: "Agitateur magnétique",
-    price: "195,000 F CFA",
-  },
-];
+import DressCard from "@/components/card/card";
+import { useProductStore } from "@/store/productStore"; // adjust the path if needed
 
 export default function CarouselProduct() {
-  const [api, setApi] = React.useState<CarouselApi>();
+  const [api, setApi] = React.useState<CarouselApi | null>(null);
+  const { products, fetchProducts, loading } = useProductStore();
 
+  const [refreshed, setRefreshed] = React.useState(false);
+
+  // Fetch products on mount
   React.useEffect(() => {
-    if (!api) {
-      return;
+    if (products.length === 0 && !loading) {
+      fetchProducts();
     }
+  }, []);
 
-    // Automatically change slide every 5 seconds
-    const interval = setInterval(() => {
-      api.scrollNext();
-    }, 5000);
+  // If products are still empty after first load, try once more
+  React.useEffect(() => {
+    if (!refreshed && !loading && products.length === 0) {
+      setRefreshed(true);
+      fetchProducts();
+    }
+  }, [products, loading]);
 
-    // Cleanup interval on unmount
+  // Auto-slide
+  React.useEffect(() => {
+    if (!api) return;
+    const interval = setInterval(() => api.scrollNext(), 5000);
     return () => clearInterval(interval);
   }, [api]);
+
+  const displayedProducts = [...products].slice(-10).reverse();
 
   return (
     <div className="relative w-full max-w-6xl mx-auto">
       <Carousel
         setApi={setApi}
         className="w-full"
-        opts={{
-          align: "start",
-          loop: true,
-        }}
+        opts={{ align: "start", loop: true }}
       >
-        <CarouselContent className="">
-          {equipments.map((dress, index) => (
+        <CarouselContent>
+          {displayedProducts.map((product, index) => (
             <CarouselItem
               key={index}
               className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/4 px-0 md:px-1"
             >
               <DressCard
-                imageUrl={dress.imageUrl}
-                title={dress.title}
-                price={dress.price}
+                imageUrl={
+                  product?.images && product.images.length > 0
+                    ? product.images[0]
+                    : "/placeholder.jpg"
+                }
+                title={product.name}
+                price={product.price + " F CFA"}
+                id={product._id ? String(product._id) : ""}
               />
             </CarouselItem>
           ))}
         </CarouselContent>
 
-        {/* Navigation Buttons (Hidden on Mobile) */}
-        <div className="hidden lg:block ">
+        {/* Show navigation on large screens */}
+        <div className="hidden lg:block">
           <CarouselPrevious />
           <CarouselNext />
         </div>

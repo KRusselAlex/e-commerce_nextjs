@@ -15,40 +15,56 @@ import {
 } from "@/components/ui/sidebar";
 import { Bell, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { usePathname } from "next/navigation";
+import { getBreadCrumbFromPath } from "@/lib/utils/get-breadcrumb";
+import Link from "next/link";
 
+// Inside your Dashboard component:
 export default function Dashboard({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const breadcrumb = getBreadCrumbFromPath(pathname);
+
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex fixed h-16 shrink-0 bg-white z-30 top-0 items-center gap-2 border-b px-4 justify-between">
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b bg-white px-4 justify-between">
           <div className="flex items-center gap-2">
             <SidebarTrigger className="text-primary" />
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
+                  <BreadcrumbLink href="#">{breadcrumb[0]}</BreadcrumbLink>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
+                {breadcrumb[1] && (
+                  <>
+                    <BreadcrumbSeparator className="hidden md:block" />
+                    <BreadcrumbItem>
+                      <BreadcrumbPage>{breadcrumb[1]}</BreadcrumbPage>
+                    </BreadcrumbItem>
+                  </>
+                )}
               </BreadcrumbList>
             </Breadcrumb>
           </div>
+
+          {/* Right side */}
           <div className="flex items-center gap-4">
-            <Bell className="w-6 h-6 text-gray-600 cursor-pointer" />
+            <Bell className="h-6 w-6 text-gray-600 cursor-pointer" />
             <div className="flex items-center gap-2">
-              <UserCircle className="w-8 h-8 text-gray-600" />
-              <span className=" hidden md:block font-medium ">John Doe</span>
+              <UserCircle className="h-6 w-6 text-gray-600" />
+              <span className="hidden md:block font-medium">John Doe</span>
             </div>
-            <Button variant="default">Go to Shop</Button>
+            <Link href={"/shop"}>
+              <Button variant="default" className="text-white">
+                Go to Shop
+              </Button>
+            </Link>
           </div>
         </header>
-        {children}
+
+        <main className="p-4 flex-1 overflow-auto">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

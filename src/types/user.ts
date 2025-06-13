@@ -1,10 +1,13 @@
 import { ObjectId } from 'mongodb';
 
+
 export interface UserTypes {
-    _id?: ObjectId; 
+    id?: ObjectId | string; 
     email: string;
-    isVerified: boolean;
-    password: string;
+    isVerified?: boolean;
+    role: string;
+    status: string;
+    password?: string;
     verificationToken?: string,
     verificationExpires?:Date,
     name: string;

@@ -1,82 +1,78 @@
+import { NextRequest } from 'next/server';
 import { connectToDatabase } from '@/lib/dbConnect';
 import { sendResponse } from '@/lib/apiResponse';
-import { productSchema } from '@/lib/validationSchemas';
-import { formatZodErrors } from '@/lib/formatZodErrors';
-import { ProductTypes } from '@/types/product';
+import { Image } from '@/types/image';
+import { ObjectId } from 'mongodb';
+import cloudinary from '@/lib/cloudinaryConfig';
 
-export async function GET(request: Request) {
+export async function POST(request: NextRequest) {
     try {
         const { db } = await connectToDatabase();
-        const url = new URL(request.url);
-        const page = parseInt(url.searchParams.get('page') || '1', 10);
-        const limit = parseInt(url.searchParams.get('limit') || '10', 10);
-        const skip = (page - 1) * limit;
+        const formData = await request.formData();
 
-        // Fetch products with pagination
-        const products = await db.collection('products')
-            .find({})
-            .skip(skip)
-            .limit(limit)
-            .toArray();
+        const productId = formData.get('productId') as string;
+        const files = formData.getAll('file') as File[];
 
-        // Get total count for pagination metadata
-        const totalCount = await db.collection('products').countDocuments();
-
-        return sendResponse(200, true, 'Products fetched successfully', {
-            products,
-            currentPage: page,
-            totalPages: Math.ceil(totalCount / limit),
-            totalItems: totalCount,
-        });
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch products';
-        return sendResponse(500, false, errorMessage, null, {
-            code: 500,
-            details: errorMessage,
-        });
-    }
-}
-
-
-export async function POST(request: Request) {
-    try {
-        const { db } = await connectToDatabase();
-        const requestBody = await request.json();
-
-        const validationResult = productSchema.safeParse(requestBody);
-
-        // If validation fails, return an error response
-        if (!validationResult.success) {
-            const formattedErrors = formatZodErrors(validationResult.error.errors);
-            return sendResponse(400, false, 'Validation failed', null, {
-                code: 400,
-                details: formattedErrors,
-            });
+        if (!productId || !files.length) {
+            return sendResponse(400, false, 'Product ID and at least one image file are required');
         }
 
-        const newProduct: ProductTypes = validationResult.data;
-        newProduct.createdAt = new Date();
-        newProduct.updatedAt = new Date();
+        const objectId = new ObjectId(productId);
 
-        const result = await db.collection('products').insertOne(newProduct);
-
-        const insertedProduct = await db
-            .collection('products')
-            .findOne({ _id: result.insertedId });
-
-        if (!insertedProduct) {
-            return sendResponse(500, false, 'Failed to fetch inserted product', null, {
-                code: 500,
-                details: 'Failed to fetch inserted product',
-            });
+        const productExists = await db.collection('products').findOne({ _id: objectId });
+        if (!productExists) {
+            return sendResponse(404, false, 'Product not found');
         }
 
-        return sendResponse(201, true, 'Product created successfully', insertedProduct);
+        const uploadedImages: Image[] = [];
+
+        for (const file of files) {
+            const arrayBuffer = await file.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+
+            const uploadResult = await new Promise((resolve, reject) => {
+                cloudinary.uploader.upload_stream(
+                    {
+                        resource_type: 'image',
+                        folder: 'product_images',
+                    },
+                    (error, result) => {
+                        if (error) return reject(error);
+                        resolve(result);
+                    }
+                ).end(buffer);
+            });
+
+            const cloudinaryResult = uploadResult as {
+                secure_url: string;
+                public_id: string; // <-- Add this
+            };
+
+            const newImage: Image = {
+                productId: objectId,
+                url: cloudinaryResult.secure_url,
+                publicId: cloudinaryResult.public_id, // <-- Store this
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            };
+
+            const result = await db.collection('images').insertOne(newImage);
+            const insertedImage = await db.collection('images').findOne({ _id: result.insertedId });
+
+            if (insertedImage) {
+                const image: Image = {
+                    productId: insertedImage.productId,
+                    url: insertedImage.url,
+                    createdAt: insertedImage.createdAt,
+                    updatedAt: insertedImage.updatedAt,
+                };
+                uploadedImages.push(image);
+            }
+        }
+
+        return sendResponse(201, true, 'Images uploaded successfully', uploadedImages);
     } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to create product';
-        return sendResponse(500, false, errorMessage, null, {
-            code: 500,
-            details: errorMessage,
-        });
+        const errorMessage = error instanceof Error ? error.message : 'Failed to upload image';
+        return sendResponse(500, false, errorMessage);
     }
 }

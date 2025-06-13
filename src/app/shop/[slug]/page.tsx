@@ -14,6 +14,7 @@ export default function Product() {
     slug = "alex";
   }
 
+  console.log("Product slug:", slug); // Debugging line to check the slug value
   return (
     <div>
       <div className="heroNav bg-primary text-white">

@@ -24,3 +24,13 @@ export const loginSchema = z.object({
     email: z.string().email({ message: 'Invalid email address' }),
     password: z.string().min(1, { message: 'Password is required' }),
 });
+
+export const imageSchema = z.object({
+    productId: z.string().min(1, { message: "Product ID is required" }),
+    // We now expect the file to be uploaded via FormData, not URL directly
+});
+
+export const categorySchema = z.object({
+    parentId: z.string().optional().nullable(),
+    name: z.string().min(1, 'Category name is required'),
+});

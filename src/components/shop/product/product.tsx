@@ -1,20 +1,15 @@
-import { useState } from "react";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useProductStore } from "@/store/productStore";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import Image from "next/image";
 import Link from "next/link";
 
-
-
-const product = {
-  id: 1,
-  name: "Microscope optique",
-  category: "Microscopes",
-  price: 500,
-  description:
-    "Un microscope optique de haute précision, idéal pour les travaux de laboratoire en biologie et chimie. Offre une excellente qualité d’image et une grande durabilité.",
-  images: ["/microscope1.jpeg", "/microscope1.jpeg", "/microscope1.jpeg"],
-};
+interface ProductViewProps {
+  productId: string;
+}
 
 const relatedProducts = [
   {
@@ -40,17 +35,33 @@ const relatedProducts = [
   },
 ];
 
-
-interface ProductViewProps {
-  productId: string;
-}
-
 export default function ProductView({ productId }: ProductViewProps) {
-  const [selectedImage, setSelectedImage] = useState(product.images[0]);
+  const products = useProductStore((state) => state.products);
+  const getProductById = useProductStore((state) => state.getProductById);
+  const fetchProducts = useProductStore((state) => state.fetchProducts);
+
+  const product = getProductById(productId);
+
+  const [selectedImage, setSelectedImage] = useState(
+    product?.images?.[0] || "/placeholder.png"
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
+
+  useEffect(() => {
+    // If products list is empty, fetch
+    if (products.length === 0) {
+      fetchProducts();
+    }
+  }, [products.length, fetchProducts]);
+
+  useEffect(() => {
+    if (product?.images?.[0]) {
+      setSelectedImage(product.images[0]);
+    }
+  }, [product]);
 
   const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Math.max(1, parseInt(e.target.value));
@@ -67,16 +78,15 @@ export default function ProductView({ productId }: ProductViewProps) {
     setIsModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  const closeModal = () => setIsModalOpen(false);
 
-  console.log(productId);
+  if (!product) return <div>Product not found.</div>;
 
   return (
     <div className="bg-fourthly">
-      <div className="px-2 md:px-16 py-6 mx-auto max-w-7xl ">
+      <div className="px-2 md:px-16 py-6 mx-auto max-w-7xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Product Image */}
           <div>
             <div className="w-full h-96 flex justify-center items-center overflow-hidden rounded-lg shadow-lg">
               <Image
@@ -84,14 +94,14 @@ export default function ProductView({ productId }: ProductViewProps) {
                 alt={product.name}
                 width={400}
                 height={400}
-                className=" w-full h-full"
+                className="w-full h-full"
                 onClick={() => openModal(selectedImage)}
               />
             </div>
             <div className="flex justify-center md:justify-start mt-4 gap-2">
-              {product.images.map((img, index) => (
+              {product.images?.map((img, i) => (
                 <button
-                  key={index}
+                  key={i}
                   onClick={() => setSelectedImage(img)}
                   className="w-20 h-20 border rounded-lg overflow-hidden hover:shadow-md"
                 >
@@ -107,7 +117,8 @@ export default function ProductView({ productId }: ProductViewProps) {
             </div>
           </div>
 
-          <div className="flex flex-col justify-center w-full items-center md:items-start md:justify-start">
+          {/* Product Info */}
+          <div className="flex flex-col justify-center items-center md:items-start">
             <h1 className="text-3xl font-bold mb-3">{product.name}</h1>
             <p className="text-gray-600 mb-3">{product.description}</p>
             <p className="text-2xl font-semibold text-green-600 mb-4">
@@ -146,6 +157,7 @@ export default function ProductView({ productId }: ProductViewProps) {
           </div>
         </div>
 
+        {/* Related Products */}
         <div className="mt-12">
           <h2 className="text-2xl font-semibold mb-4 text-center md:text-start">
             Related Products
@@ -157,9 +169,7 @@ export default function ProductView({ productId }: ProductViewProps) {
                 className="p-2 shadow-lg hover:shadow-xl transition-all"
               >
                 <Link
-                  href={
-                    process.env.NEXT_PUBLIC_BASE_URL + "/shop/" + product.id
-                  }
+                  href={`/shop/${product.id}`}
                   className="w-full h-52 flex justify-center items-center overflow-hidden rounded-lg"
                 >
                   <Image
@@ -167,11 +177,11 @@ export default function ProductView({ productId }: ProductViewProps) {
                     alt={product.name}
                     width={220}
                     height={220}
-                    className=" w-full h-full"
+                    className="w-full h-full"
                   />
                 </Link>
                 <CardContent className="mt-2 text-center">
-                  <h2 className=" text-lg">{product.name}</h2>
+                  <h2 className="text-lg">{product.name}</h2>
                   <p className="text-gray-600">${product.price}</p>
                 </CardContent>
               </Card>
@@ -179,6 +189,7 @@ export default function ProductView({ productId }: ProductViewProps) {
           </div>
         </div>
 
+        {/* Image Modal */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-4 rounded-lg max-w-full max-h-full overflow-auto relative">

@@ -5,8 +5,9 @@ export interface ProductTypes {
     name: string;
     description: string;
     price: number;
-    category: string;
+    category: ObjectId | string;
     stockQuantity: number;
+    images?: string[];
     createdAt?: Date; // Optional, can be set by the database
     updatedAt?: Date; // Optional, can be set by the database
 }

@@ -3,6 +3,7 @@ import { sendResponse } from '@/lib/apiResponse';
 import { productSchema } from '@/lib/validationSchemas';
 import { formatZodErrors } from '@/lib/formatZodErrors';
 import { ProductTypes } from '@/types/product';
+import { ObjectId } from 'mongodb';
 
 export async function GET(request: Request) {
     try {
@@ -19,11 +20,33 @@ export async function GET(request: Request) {
             .limit(limit)
             .toArray();
 
+        // Get all product IDs
+        const productIds = products.map((product: any) => product._id);
+
+        // Fetch images associated with these products
+        const images = await db.collection('images')
+            .find({ productId: { $in: productIds } })
+            .toArray();
+
+        // Map images to products
+        const imagesByProductId: Record<string, string[]> = {};
+        images.forEach((img: any) => {
+            const pid = img.productId.toString();
+            if (!imagesByProductId[pid]) imagesByProductId[pid] = [];
+            if (img.url) imagesByProductId[pid].push(img.url);
+        });
+
+        // Attach images to each product
+        const productsWithImages = products.map((product: any) => ({
+            ...product,
+            images: imagesByProductId[product._id.toString()] || [],
+        }));
+
         // Get total count for pagination metadata
         const totalCount = await db.collection('products').countDocuments();
 
         return sendResponse(200, true, 'Products fetched successfully', {
-            products,
+            products: productsWithImages,
             currentPage: page,
             totalPages: Math.ceil(totalCount / limit),
             totalItems: totalCount,
@@ -45,6 +68,8 @@ export async function POST(request: Request) {
 
         const validationResult = productSchema.safeParse(requestBody);
 
+
+
         // If validation fails, return an error response
         if (!validationResult.success) {
             const formattedErrors = formatZodErrors(validationResult.error.errors);
@@ -54,9 +79,28 @@ export async function POST(request: Request) {
             });
         }
 
-        const newProduct: ProductTypes = validationResult.data;
-        newProduct.createdAt = new Date();
-        newProduct.updatedAt = new Date();
+        const ProductName = validationResult.data?.name
+
+        const existingProduct = await db
+            .collection("products")
+            .findOne({ name: ProductName });
+        console.log("exist", existingProduct)
+
+        if (existingProduct) {
+            return sendResponse(400, false, "Product name must be unique", null, {
+                code: 400,
+                details: `A product with the name "${ProductName}" already exists.`,
+            });
+        }
+
+        const newProduct: ProductTypes = {
+            ...validationResult.data,
+            category: new ObjectId(validationResult.data.category),
+            createdAt: new Date(),
+            updatedAt: new Date()
+
+        }
+
 
         const result = await db.collection('products').insertOne(newProduct);
 

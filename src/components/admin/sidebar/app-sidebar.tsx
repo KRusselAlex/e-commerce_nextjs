@@ -1,6 +1,5 @@
 import * as React from "react";
 import {
-  GalleryVerticalEnd,
   ShoppingCart,
   FileText,
   User,
@@ -28,56 +27,55 @@ import {
   CollapsibleContent,
 } from "@/components/ui/collapsible";
 import Link from "next/link";
+import Logo from "@/components/logo/logo";
 
 const data = {
   navMain: [
     {
-      title: "Dashboard",
+      title: "Tableau de bord",
       url: "#",
       icon: <FileText className="h-5 w-5" />,
       items: [
-        { title: "Overview", url: "/oniichan", isActive: true },
-        { title: "Analytics", url: "/oniichan/home/analytics" },
+        { title: "Aperçu", url: "/oniichan", isActive: true },
+        { title: "Analytique", url: "/oniichan/home/analytics" },
       ],
     },
     {
-      title: "Shop Management",
+      title: "Gestion de la boutique",
       url: "#",
       icon: <ShoppingCart className="h-5 w-5" />,
       items: [
-        { title: "Products", url: "#" },
-        { title: "Categories", url: "#" },
-        { title: "Discounts & Offers", url: "#" },
+        { title: "Produits", url: "/oniichan/shop/product" },
+        { title: "Catégories", url: "/oniichan/shop/categories" },
+        { title: "Ajouter des produits", url: "/oniichan/shop/add-product" },
       ],
     },
     {
-      title: "Orders",
+      title: "Commandes",
       url: "#",
       icon: <ShoppingCart className="h-5 w-5" />,
       items: [
-        { title: "Order List", url: "#" },
-        { title: "Order Status", url: "#" },
-        { title: "Returns & Refunds", url: "#" },
+        { title: "Liste des commandes", url: "#" },
+        { title: "Statut des commandes", url: "#" },
       ],
     },
     {
-      title: "User Management",
+      title: "Gestion des utilisateurs",
       url: "#",
       icon: <User className="h-5 w-5" />,
       items: [
-        { title: "User List", url: "#" },
-        { title: "Roles & Permissions", url: "#" },
-        { title: "Customer Support", url: "#" },
+        { title: "Liste des utilisateurs", url: "#" },
+        // { title: "Rôles & Permissions", url: "#" },
+        // { title: "Support client", url: "#" },
       ],
     },
     {
-      title: "Settings",
+      title: "Paramètres",
       url: "#",
       icon: <Settings className="h-5 w-5" />,
       items: [
-        { title: "Profile", url: "#" },
-        { title: "Logout", url: "#" },
-        { title: "Shipping Settings", url: "#" },
+        { title: "Profil", url: "/oniichan/profil" },
+        { title: "Déconnexion", url: "#" },
       ],
     },
   ],
@@ -92,11 +90,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton size="lg" asChild>
               <Link href="#">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-sidebar-primary-foreground">
-                  <GalleryVerticalEnd className="size-4" />
+                  <Logo />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="Sprite_Graffiti text-xl font-semibold">
-                    A&apos;SPACE
+                    Feudjeu Corp
                   </span>
                 </div>
               </Link>
@@ -155,3 +153,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   );
 }
+
+export const navMain = data.navMain;

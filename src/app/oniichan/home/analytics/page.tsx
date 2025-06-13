@@ -87,109 +87,111 @@ export default function AnalyticsPage() {
 
   return (
     <Dashboard>
-      <div className="grid gap-6 p-6 md:grid-cols-2 lg:grid-cols-3 overflow-x-auto">
-        {/* Sales Overview */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Revenue</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">${data.orders.totalRevenue}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Orders</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{data.orders.totalOrders}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Average Order Value</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
-              ${data.orders.averageOrderValue}
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Product Performance Chart */}
-      </div>
-      <div className="flex flex-col gap-6 p-2 md:p-6 w-full overflow-x-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-          <Card className="md:col-span-2">
+      <div className="mx-auto max-w-[110em]">
+        <div className="grid gap-6 p-6 md:grid-cols-2 lg:grid-cols-3 overflow-x-auto">
+          {/* Sales Overview */}
+          <Card>
             <CardHeader>
-              <CardTitle>Best Selling Products</CardTitle>
+              <CardTitle>Total Revenue</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">${data.orders.totalRevenue}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Total Orders</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{data.orders.totalOrders}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Average Order Value</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">
+                ${data.orders.averageOrderValue}
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Product Performance Chart */}
+        </div>
+        <div className="flex flex-col gap-6 p-2 md:p-6 w-full overflow-x-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+            <Card className="md:col-span-2">
+              <CardHeader>
+                <CardTitle>Best Selling Products</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={data.products.bestSelling}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="sales" fill="#4F46E5" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* User Analytics Pie Chart */}
+            <Card>
+              <CardHeader>
+                <CardTitle>User Analytics</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={userPieData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      label
+                    >
+                      {userPieData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Order Statistics Bar Chart */}
+          <Card className="">
+            <CardHeader>
+              <CardTitle>Order Status</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={data.products.bestSelling}>
+                <BarChart
+                  data={Object.entries(data.orders).map(([key, value]) => ({
+                    name: key,
+                    value,
+                  }))}
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="sales" fill="#4F46E5" />
+                  <Bar dataKey="value" fill="#4F46E5" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
-
-          {/* User Analytics Pie Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle>User Analytics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={userPieData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    label
-                  >
-                    {userPieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
         </div>
-
-        {/* Order Statistics Bar Chart */}
-        <Card className="">
-          <CardHeader>
-            <CardTitle>Order Status</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart
-                data={Object.entries(data.orders).map(([key, value]) => ({
-                  name: key,
-                  value,
-                }))}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="value" fill="#4F46E5" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
       </div>
     </Dashboard>
   );

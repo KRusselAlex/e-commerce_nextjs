@@ -1,39 +1,29 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import ProductCard from "./productCard";
-
-const equipmentProducts = [
-  {
-    id: 1,
-    name: "Microscope optique",
-    price: "200,000 F CFA",
-    image: "/gojod.jpeg",
-  },
-  {
-    id: 2,
-    name: "Centrifugeuse",
-    price: "500,000 F CFA",
-    image: "/gojod.jpeg",
-  },
-  {
-    id: 3,
-    name: "Balance analytique",
-    price: "350,000 F CFA",
-    image: "/gojod.jpeg",
-  },
-];
+import { useProductStore } from "@/store/productStore"; // Adjust path if needed
 
 const SearchBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
 
-  const filteredProducts = equipmentProducts.filter((p) =>
+  const { products, fetchProducts, loading } = useProductStore();
+
+  useEffect(() => {
+    if (products.length === 0 && !loading) {
+      fetchProducts();
+    }
+  }, [products, loading, fetchProducts]);
+
+  const filteredProducts = products.filter((p) =>
     p.name.toLowerCase().includes(query.toLowerCase())
   );
 
   return (
     <div>
-      <button onClick={() => setIsOpen(true)} className="">
+      <button onClick={() => setIsOpen(true)}>
         <Search className="w-5 h-5 transition-transform duration-300 hover:scale-125" />
       </button>
 
@@ -52,20 +42,27 @@ const SearchBar: React.FC = () => {
           <input
             type="text"
             placeholder="Rechercher un produit..."
-            className="w-full border p-2 rounded mb-4"
+            className="w-full border text-black p-2 rounded mb-4"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
           <div className="grid grid-cols-1 gap-4">
             {filteredProducts.map((product) => (
               <ProductCard
-                key={product.id}
+                key={product._id?.toString() || product.name}
                 name={product.name}
-                price={product.price}
-                image={product.image}
+                price={`${product.price} F CFA`}
+                image={
+                  product?.images && product.images.length > 0
+                    ? product.images[0]
+                    : "/placeholder.jpg"
+                }
+                id={product._id ? product._id.toString() : ""}
               />
             ))}
-            {filteredProducts.length === 0 && <p>Aucun produit trouvé.</p>}
+            {!loading && filteredProducts.length === 0 && (
+              <p className="text-center text-black">Aucun produit trouvé.</p>
+            )}
           </div>
         </div>
       </div>

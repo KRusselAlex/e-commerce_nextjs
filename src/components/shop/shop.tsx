@@ -11,83 +11,10 @@ import {
 import { Slider } from "@/components/ui/slider";
 import Image from "next/image";
 import Link from "next/link";
-
-const products = [
-  {
-    id: 1,
-    name: "Microscope optique",
-    category: "Microscopes",
-    price: 500,
-    date: "2024-01-01",
-    image: "/gojod.jpeg",
-  },
-  {
-    id: 2,
-    name: "Pipettes automatiques",
-    category: "Accessoires de laboratoire",
-    price: 150,
-    date: "2024-01-05",
-    image: "/gojod.jpeg",
-  },
-  {
-    id: 3,
-    name: "Centrifugeuse",
-    category: "Centrifugeuses",
-    price: 1200,
-    date: "2024-02-01",
-    image: "/gojod.jpeg",
-  },
-  {
-    id: 4,
-    name: "Agitateur magnétique",
-    category: "Agitateurs",
-    price: 300,
-    date: "2024-02-10",
-    image: "/gojod.jpeg",
-  },
-  {
-    id: 5,
-    name: "Balance analytique",
-    category: "Balances",
-    price: 800,
-    date: "2024-02-10",
-    image: "/gojod.jpeg",
-  },
-  {
-    id: 6,
-    name: "Spectrophotomètre",
-    category: "Spectrophotomètres",
-    price: 2500,
-    date: "2024-02-10",
-    image: "/gojod.jpeg",
-  },
-  {
-    id: 7,
-    name: "Bain-marie",
-    category: "Bains-marie",
-    price: 600,
-    date: "2024-02-10",
-    image: "/gojod.jpeg",
-  },
-  {
-    id: 8,
-    name: "Hotte aspirante",
-    category: "Sécurité",
-    price: 3500,
-    date: "2024-02-10",
-    image: "/gojod.jpeg",
-  },
-  {
-    id: 9,
-    name: "PH-mètre",
-    category: "Mesure",
-    price: 200,
-    date: "2024-02-10",
-    image: "/gojod.jpeg",
-  },
-];
-
-const categories = ["Tous", ...new Set(products.map((p) => p.category))];
+import { useCategoryStore } from "@/store/categorieStore";
+import { useEffect } from "react";
+import { useProductStore } from "@/store/productStore";
+import Loading from "../loading/loading";
 
 export default function ShopSection() {
   const [category, setCategory] = useState("Tous");
@@ -96,18 +23,42 @@ export default function ShopSection() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
 
+  useEffect(() => {
+    useProductStore.getState().fetchProducts();
+    useCategoryStore.getState().fetchCategories();
+  }, []);
+
+  const products = useProductStore((state) => state.products) || [];
+  const loading = useProductStore((state) => state.loading);
+  const error = useProductStore((state) => state.error);
+
+  const categories = useCategoryStore((state) => state.categories);
+
+  // Map category names to their ObjectIds for filtering
+  const categoryMap = categories.reduce<{ [name: string]: string }>(
+    (acc, cat) => {
+      acc[cat.name] = cat._id?.toString() ?? "";
+      return acc;
+    },
+    {}
+  );
+
   let filteredProducts =
     category === "Tous"
-      ? products
-      : products.filter((p) => p.category === category);
+      ? Array.isArray(products)
+        ? products
+        : []
+      : Array.isArray(products)
+      ? products.filter((p) => p.category === categoryMap[category])
+      : [];
 
   filteredProducts = filteredProducts.filter(
     (p) => p.price >= priceRange[0] && p.price <= priceRange[1]
   );
 
   filteredProducts.sort((a, b) => {
-    const dateA = new Date(a.date).getTime();
-    const dateB = new Date(b.date).getTime();
+    const dateA = new Date(a.createdAt ?? "").getTime();
+    const dateB = new Date(b.createdAt ?? "").getTime();
     return sortByDate === "Nouveautés" ? dateB - dateA : dateA - dateB;
   });
 
@@ -129,9 +80,12 @@ export default function ShopSection() {
                   <SelectValue placeholder="Choisir une catégorie" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem key="all" value="Tous">
+                    Tous
+                  </SelectItem>
                   {categories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
+                    <SelectItem key={cat._id} value={cat.name}>
+                      {cat.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -161,30 +115,42 @@ export default function ShopSection() {
             </div>
           </Card>
 
-          {displayedProducts.map((product) => (
-            <Card
-              key={product.id}
-              className="p-2 shadow-lg hover:shadow-xl transition-all"
-            >
-              <Link href={`/shop/${product.id}`} passHref legacyBehavior>
-                <a className="w-full h-full flex justify-center items-center overflow-hidden rounded-lg">
-                  <div className="w-full h-[250px] relative bg-white rounded-lg">
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="rounded-lg object-cover"
-                    />
-                  </div>
-                </a>
-              </Link>
-              <CardContent className="mt-2 text-center">
-                <h2 className="text-lg">{product.name}</h2>
-                <p className="text-gray-600">{product.price}€</p>
-              </CardContent>
-            </Card>
-          ))}
+          {loading ? (
+            <Loading />
+          ) : error ? (
+            <div className="text-red-500 text-center">
+              Une erreur est survenue lors du chargement des produits.
+            </div>
+          ) : displayedProducts.length === 0 ? (
+            <div className="text-gray-500 text-center">
+              Aucun produit trouvé pour les critères sélectionnés.
+            </div>
+          ) : (
+            displayedProducts.map((product) => (
+              <Card
+                key={product._id?.toString() ?? product.name}
+                className="p-2 shadow-lg hover:shadow-xl transition-all"
+              >
+                <Link href={`/shop/${product._id}`} passHref legacyBehavior>
+                  <a className="w-full h-full flex justify-center items-center overflow-hidden rounded-lg">
+                    <div className="w-full h-[250px] relative bg-white rounded-lg">
+                      <Image
+                        src={product.images?.[0] || "/placeholder.png"}
+                        alt={product.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="rounded-lg object-cover"
+                      />
+                    </div>
+                  </a>
+                </Link>
+                <CardContent className="mt-2 text-center">
+                  <h2 className="text-lg">{product.name}</h2>
+                  <p className="text-gray-600">{product.price}€</p>
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
 
         <div className="flex justify-center mt-6 gap-2">

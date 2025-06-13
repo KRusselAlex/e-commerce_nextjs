@@ -10,6 +10,13 @@ Elle offre une expérience d’achat fluide, avec intégration des paiements via
 
 ---
 
+## Demo
+
+```bash
+https://e-commerce-nextjs-lemon.vercel.app/
+
+```
+
 ## 🚀 Fonctionnalités
 
 - 🏬 Catalogue de produits avec détails
