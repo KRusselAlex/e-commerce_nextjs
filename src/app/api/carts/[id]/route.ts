@@ -16,12 +16,12 @@ const updateCartSchema = z.object({
     })).optional(),
 });
 
-export async function GET(
-    request: NextRequest,
-    { params }: { params: { id: string } }
-) {
+
+
+export async function GET(request: NextRequest) {
     try {
-        const { id } = params;
+        const url = new URL(request.url);
+        const id = url.pathname.split("/").pop(); // Extract `id` from the URL path
 
         if (!id || !ObjectId.isValid(id)) {
             return sendResponse(400, false, "Invalid cart ID", null, {
