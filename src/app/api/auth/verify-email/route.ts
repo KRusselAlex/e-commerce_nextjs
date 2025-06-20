@@ -1,5 +1,4 @@
 import { connectToDatabase } from '@/lib/dbConnect';
-import { sendResponse } from '@/lib/apiResponse';
 
 export async function GET(request: Request) {
     try {
@@ -8,27 +7,43 @@ export async function GET(request: Request) {
         const token = url.searchParams.get('token');
 
         if (!token) {
-            return sendResponse(400, false, 'Invalid verification token');
+            return redirectToError("Invalid verification token");
         }
 
         const user = await db.collection('users').findOne({ verificationToken: token });
 
         if (!user) {
-            return sendResponse(400, false, 'Invalid or expired token');
+            return redirectToError("Invalid or expired token");
         }
 
         if (new Date(user.verificationExpires) < new Date()) {
-            return sendResponse(400, false, 'Verification token has expired');
+            return redirectToError("Verification token has expired");
         }
 
-        // Update user status
         await db.collection('users').updateOne(
             { _id: user._id },
             { $set: { isVerified: true }, $unset: { verificationToken: "", verificationExpires: "" } }
         );
 
-        return sendResponse(200, true, 'Email verified successfully');
+        return new Response(null, {
+            status: 302,
+            headers: {
+                Location: `${process.env.NEXT_PUBLIC_BASE_URL}/email-verified`,
+            },
+        });
+
     } catch (error) {
-        return sendResponse(500, false, 'Failed to verify email', null, { code: 500, details: error });
+        console.error("Email verification error:", error);
+        return redirectToError("Something went wrong during email verification." + error);
     }
+}
+
+function redirectToError(message: string) {
+    const errorUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/error/${encodeURIComponent(message)}`;
+    return new Response(null, {
+        status: 302,
+        headers: {
+            Location: errorUrl,
+        },
+    });
 }

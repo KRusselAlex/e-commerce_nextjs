@@ -100,7 +100,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <Label>URL de l'avatar</Label>
+                    <Label>URL de l&apos;avatar</Label>
                     <Input
                       name="avatarUrl"
                       value={formData.avatarUrl}

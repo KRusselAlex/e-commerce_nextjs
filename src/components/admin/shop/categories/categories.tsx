@@ -1,5 +1,14 @@
 "use client";
-import React, { useState, useMemo } from "react";
+
+import React, { useState, useEffect, useMemo } from "react";
+import { ObjectId } from "bson";
+import {
+  getCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+} from "@/lib/api";
+
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,25 +21,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { toast } from "sonner";
 
-interface Category {
-  _id?: string;
-  parentId: string | null;
+export interface Category {
+  _id?: ObjectId | string;
+  parentId: ObjectId | null;
   name: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-const mockCategories: Category[] = [
-  { _id: "1", parentId: null, name: "Science" },
-  { _id: "2", parentId: null, name: "Technology" },
-  { _id: "3", parentId: null, name: "Health" },
-  { _id: "4", parentId: null, name: "Business" },
-  { _id: "5", parentId: null, name: "Education" },
-];
-
 export default function CategoryManager() {
-  const [categories, setCategories] = useState<Category[]>(mockCategories);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null
   );
@@ -39,58 +41,86 @@ export default function CategoryManager() {
   const [mode, setMode] = useState<"view" | "edit" | "add">("view");
   const [search, setSearch] = useState("");
 
+  useEffect(() => {
+    getCategories()
+      .then((res) => setCategories(res.data.data))
+      .catch(() => toast.error("Erreur lors du chargement des catégories"));
+  }, []);
+
   const filteredCategories = useMemo(() => {
     return categories.filter((cat) =>
       cat.name.toLowerCase().includes(search.toLowerCase())
     );
   }, [search, categories]);
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     const newCat: Category = {
-      _id: Math.random().toString(36).substring(2, 10),
-      parentId,
       name,
+      parentId: parentId ? new ObjectId(parentId) : null,
     };
-    setCategories((prev) => [...prev, newCat]);
-    setName("");
-    setParentId(null);
-    setMode("view");
-  };
-
-  const handleUpdate = () => {
-    if (selectedCategory) {
-      setCategories((prev) =>
-        prev.map((cat) =>
-          cat._id === selectedCategory._id ? { ...cat, name, parentId } : cat
-        )
-      );
-      setSelectedCategory(null);
-      setName("");
-      setParentId(null);
-      setMode("view");
+    try {
+      const res = await createCategory(newCat);
+      setCategories((prev) => [...prev, res.data.data]);
+      toast.success("Catégorie ajoutée avec succès");
+      resetForm();
+    } catch {
+      toast.error("Erreur lors de l'ajout de la catégorie");
     }
   };
 
-  const handleDelete = (id: string) => {
-    setCategories((prev) => prev.filter((cat) => cat._id !== id));
-    setSelectedCategory(null);
-    setName("");
-    setParentId(null);
-    setMode("view");
+  const handleUpdate = async () => {
+    if (!selectedCategory) return;
+    const updatedCat: Category = {
+      ...selectedCategory,
+      name,
+      parentId: parentId ? new ObjectId(parentId) : null,
+    };
+    try {
+      await updateCategory(selectedCategory._id!.toString(), updatedCat);
+      setCategories((prev) =>
+        prev.map((cat) =>
+          cat._id?.toString() === selectedCategory._id?.toString()
+            ? updatedCat
+            : cat
+        )
+      );
+      toast.success("Catégorie modifiée avec succès");
+      resetForm();
+    } catch {
+      toast.error("Erreur lors de la mise à jour de la catégorie");
+    }
+  };
+
+  const handleDelete = async (id: string | ObjectId) => {
+    try {
+      await deleteCategory(id.toString());
+      setCategories((prev) =>
+        prev.filter((cat) => cat._id?.toString() !== id.toString())
+      );
+      toast.success("Catégorie supprimée avec succès");
+      resetForm();
+    } catch {
+      toast.error("Erreur lors de la suppression");
+    }
   };
 
   const startEdit = (category: Category) => {
     setSelectedCategory(category);
     setName(category.name);
-    setParentId(category.parentId);
+    setParentId(category.parentId ? category.parentId.toString() : null);
     setMode("edit");
   };
 
   const startAdd = () => {
+    resetForm();
+    setMode("add");
+  };
+
+  const resetForm = () => {
     setSelectedCategory(null);
     setName("");
     setParentId(null);
-    setMode("add");
+    setMode("view");
   };
 
   return (
@@ -99,8 +129,8 @@ export default function CategoryManager() {
         <CardHeader className="flex justify-between items-center">
           <h2 className="text-xl font-bold">Catégories</h2>
           {mode === "view" && (
-            <Button onClick={startAdd} size="sm">
-              <Plus className="mr-1 h-4 w-4" /> Ajouter
+            <Button onClick={startAdd} size="sm" className="text-white">
+              <Plus className="mr-1 h-4 w-4 text-white" /> Ajouter
             </Button>
           )}
         </CardHeader>
@@ -116,7 +146,7 @@ export default function CategoryManager() {
                 <div className="grid gap-2">
                   {filteredCategories.map((cat) => (
                     <div
-                      key={cat._id}
+                      key={cat._id?.toString()}
                       className="flex justify-between items-center border p-2 rounded-md hover:bg-muted"
                     >
                       <span className="truncate max-w-[60%]">{cat.name}</span>
@@ -131,7 +161,14 @@ export default function CategoryManager() {
                         <Button
                           size="icon"
                           variant="destructive"
-                          onClick={() => handleDelete(cat._id!)}
+                          onClick={() => {
+                            toast.warning("Confirmer la suppression ?", {
+                              action: {
+                                label: "Supprimer",
+                                onClick: () => handleDelete(cat._id!),
+                              },
+                            });
+                          }}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -147,12 +184,7 @@ export default function CategoryManager() {
             <div className="space-y-4">
               <Button
                 variant="ghost"
-                onClick={() => {
-                  setMode("view");
-                  setSelectedCategory(null);
-                  setName("");
-                  setParentId(null);
-                }}
+                onClick={resetForm}
                 className="flex items-center gap-1 text-muted-foreground"
               >
                 <ChevronLeft className="h-4 w-4" /> Retour
@@ -174,13 +206,19 @@ export default function CategoryManager() {
                 <SelectContent>
                   <SelectItem value="none">Aucune</SelectItem>
                   {categories.map((cat) => (
-                    <SelectItem key={cat._id} value={cat._id!}>
+                    <SelectItem
+                      key={cat._id?.toString()}
+                      value={cat._id!.toString()}
+                    >
                       {cat.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <Button onClick={mode === "add" ? handleAdd : handleUpdate}>
+              <Button
+                onClick={mode === "add" ? handleAdd : handleUpdate}
+                className="text-white"
+              >
                 {mode === "add" ? "Ajouter" : "Modifier"}
               </Button>
             </div>

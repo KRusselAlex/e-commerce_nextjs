@@ -1,16 +1,27 @@
 import { ObjectId } from 'mongodb';
 
-
+export type UserRole = "admin" | "user";
+export type UserStatus = "active" | "inactive" | "suspended";
 export interface UserTypes {
-    id?: ObjectId | string; 
+    _id?: ObjectId;
     email: string;
-    isVerified?: boolean;
-    role: string;
-    status: string;
+    isVerified: boolean;
+    role: UserRole;
+    status: UserStatus;
     password?: string;
-    verificationToken?: string,
-    verificationExpires?:Date,
+    verificationToken?: string;
+    verificationExpires?: Date;
     name: string;
     createdAt?: Date;
     updatedAt?: Date;
+}
+
+export interface UserRegisterInput {
+    name: string;
+    email: string;
+    password: string;
+}
+export interface UserLoginInput {
+    email: string;
+    password: string;
 }

@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
         const refreshToken = generateRefreshToken({ userId: user._id.toString() });
 
        
-        const response = NextResponse.json({ success: true, accessToken });
+        const response = NextResponse.json({ success: true, accessToken, user: { id: user._id, email: user.email, name: user.name, role: user.role } });
 
         response.cookies.set('refreshToken', refreshToken, {
             httpOnly: true,

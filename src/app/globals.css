@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @font-face {
   font-family: 'Agrandir';
   src: url('/fonts/Agrandir-GrandHeavy.woff2') format('woff2'),

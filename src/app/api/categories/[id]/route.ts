@@ -37,18 +37,29 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PUT: Update category by ID
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
         const { db } = await connectToDatabase();
         const body = await request.json();
 
-        // Validate input
         const validationResult = categorySchema.safeParse(body);
         if (!validationResult.success) {
             const formattedErrors = formatZodErrors(validationResult.error.errors);
             return sendResponse(400, false, 'Validation failed', null, {
                 code: 400,
                 details: formattedErrors,
+            });
+        }
+
+        // ID validation
+        const isValidObjectId = (id: string) => /^[0-9a-fA-F]{24}$/.test(id);
+        if (!params.id || !isValidObjectId(params.id)) {
+            return sendResponse(400, false, 'Invalid ID format', null, {
+                code: 400,
+                details: 'The provided ID is not a valid MongoDB ObjectId.',
             });
         }
 
@@ -80,11 +91,20 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         });
     }
 }
+  
 
 // DELETE: Delete category by ID
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
     try {
         const { db } = await connectToDatabase();
+
+        const isValidObjectId = (id: string) => /^[0-9a-fA-F]{24}$/.test(id);
+        if (!params.id || !isValidObjectId(params.id)) {
+            return sendResponse(400, false, 'Invalid ID format', null, {
+                code: 400,
+                details: 'The provided ID is not a valid MongoDB ObjectId.',
+            });
+        }
 
         const result = await db.collection('categories').deleteOne({
             _id: new ObjectId(params.id),

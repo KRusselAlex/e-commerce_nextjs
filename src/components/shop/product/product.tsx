@@ -1,214 +1,166 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useProductStore } from "@/store/productStore";
+import { useState } from "react";
 import Image from "next/image";
+import { ShoppingCart, CreditCard } from "lucide-react";
+import { useCartStore } from "@/store/cartStore";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { createOrder } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import Link from "next/link";
+import { Input } from "@/components/ui/input"; // Make sure you have this
 
-interface ProductViewProps {
-  productId: string;
+interface ProductCardProps {
+  product: {
+    _id: string;
+    name: string;
+    description?: string;
+    price: number;
+    images?: string[];
+  };
 }
 
-const relatedProducts = [
-  {
-    id: 2,
-    name: "Centrifugeuse de laboratoire",
-    category: "Centrifugeuses",
-    price: 1200,
-    image: "/gojod.jpeg",
-  },
-  {
-    id: 3,
-    name: "Agitateur magnétique",
-    category: "Agitateurs",
-    price: 300,
-    image: "/gojod.jpeg",
-  },
-  {
-    id: 4,
-    name: "Balance analytique",
-    category: "Balances",
-    price: 800,
-    image: "/gojod.jpeg",
-  },
-];
-
-export default function ProductView({ productId }: ProductViewProps) {
-  const products = useProductStore((state) => state.products);
-  const getProductById = useProductStore((state) => state.getProductById);
-  const fetchProducts = useProductStore((state) => state.fetchProducts);
-
-  const product = getProductById(productId);
-
-  const [selectedImage, setSelectedImage] = useState(
-    product?.images?.[0] || "/placeholder.png"
-  );
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalImage, setModalImage] = useState("");
+export default function ProductDetail({ product }: ProductCardProps) {
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [addedToCart, setAddedToCart] = useState(false);
 
-  useEffect(() => {
-    // If products list is empty, fetch
-    if (products.length === 0) {
-      fetchProducts();
+  const router = useRouter();
+  const { addToCart, fetchCart } = useCartStore();
+
+  const user =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("userFeudjo") || "null")
+      : null;
+
+  const handleAddToCart = async () => {
+    if (!user?.id) {
+      toast.error("Veuillez vous connecter d'abord.");
+      router.push("/auth/login");
+      return;
     }
-  }, [products.length, fetchProducts]);
 
-  useEffect(() => {
-    if (product?.images?.[0]) {
-      setSelectedImage(product.images[0]);
+    if (quantity < 1) {
+      toast.error("La quantité doit être d'au moins 1.");
+      return;
     }
-  }, [product]);
 
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Math.max(1, parseInt(e.target.value));
-    setQuantity(value);
+    await addToCart(product._id, user.id, quantity);
+    await fetchCart(user.id);
+    toast.success(`${quantity} ajouté(s) au panier`);
   };
 
-  const handleAddToCart = () => {
-    setAddedToCart(true);
-    setTimeout(() => setAddedToCart(false), 2000);
+  const handleBuyNow = async () => {
+    if (!user?.id) {
+      toast.error("Veuillez vous connecter d'abord.");
+      router.push("/auth/login");
+      return;
+    }
+
+    if (quantity < 1) {
+      toast.error("La quantité doit être d'au moins 1.");
+      return;
+    }
+
+    try {
+      await createOrder({
+        userId: user._id,
+        productId: product._id,
+        name: product.name,
+        quantity,
+        price: product.price,
+        image: product.images?.[0] || "",
+      });
+      toast.success("Commande effectuée !");
+    } catch (error) {
+      console.error("Erreur commande:", error);
+      toast.error("Erreur lors de la commande");
+    }
   };
-
-  const openModal = (img: string) => {
-    setModalImage(img);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => setIsModalOpen(false);
-
-  if (!product) return <div>Product not found.</div>;
 
   return (
-    <div className="bg-fourthly">
-      <div className="px-2 md:px-16 py-6 mx-auto max-w-7xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Product Image */}
+    <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-10">
+      {/* Image gallery */}
+      <div className="flex flex-col gap-4">
+        <div className="relative w-full h-[400px] rounded-xl overflow-hidden shadow">
+          <Image
+            src={product.images?.[selectedImageIndex] || "/placeholder.png"}
+            alt={product.name}
+            fill
+            className="object-cover"
+          />
+        </div>
+
+        <div className="flex gap-3 mt-2">
+          {product.images?.map((img, index) => (
+            <div
+              key={index}
+              onClick={() => setSelectedImageIndex(index)}
+              className={`relative w-20 h-20 rounded-lg border-2 cursor-pointer transition-all ${
+                index === selectedImageIndex
+                  ? "border-black"
+                  : "border-transparent"
+              }`}
+            >
+              <Image
+                src={img}
+                alt={`Thumbnail ${index + 1}`}
+                fill
+                className="object-cover rounded-lg"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Info */}
+      <div className="flex flex-col justify-between gap-6">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
+          <p className="mt-3 text-lg text-gray-600 whitespace-pre-line">
+            {product.description}
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <span className="text-2xl font-semibold text-green-700">
+            {product.price}€
+          </span>
+
+          {/* Quantity input */}
           <div>
-            <div className="w-full h-96 flex justify-center items-center overflow-hidden rounded-lg shadow-lg">
-              <Image
-                src={selectedImage}
-                alt={product.name}
-                width={400}
-                height={400}
-                className="w-full h-full"
-                onClick={() => openModal(selectedImage)}
-              />
-            </div>
-            <div className="flex justify-center md:justify-start mt-4 gap-2">
-              {product.images?.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setSelectedImage(img)}
-                  className="w-20 h-20 border rounded-lg overflow-hidden hover:shadow-md"
-                >
-                  <Image
-                    src={img}
-                    alt={product.name}
-                    width={80}
-                    height={80}
-                    className="object-cover w-full h-full"
-                  />
-                </button>
-              ))}
-            </div>
+            <label htmlFor="qty" className="text-sm font-medium text-gray-700">
+              Quantité
+            </label>
+            <Input
+              type="number"
+              min={1}
+              id="qty"
+              value={quantity}
+              onChange={(e) =>
+                setQuantity(Math.max(1, parseInt(e.target.value) || 1))
+              }
+              className="mt-1 w-24"
+            />
           </div>
 
-          {/* Product Info */}
-          <div className="flex flex-col justify-center items-center md:items-start">
-            <h1 className="text-3xl font-bold mb-3">{product.name}</h1>
-            <p className="text-gray-600 mb-3">{product.description}</p>
-            <p className="text-2xl font-semibold text-green-600 mb-4">
-              ${product.price}
-            </p>
+          {/* Buttons */}
+          <div className="flex gap-3 mt-2">
+            <Button
+              onClick={handleAddToCart}
+              variant="outline"
+              className="flex-1 flex items-center gap-2 text-md"
+            >
+              <ShoppingCart size={20} /> Ajouter au panier
+            </Button>
 
-            <div className="flex items-center gap-4 mb-4">
-              <label htmlFor="quantity" className="text-lg font-medium">
-                Quantity:
-              </label>
-              <input
-                id="quantity"
-                type="number"
-                value={quantity}
-                onChange={handleQuantityChange}
-                className="w-16 text-center border p-2 rounded-md"
-                min={1}
-              />
-            </div>
-
-            <div className="flex gap-4">
-              <Button
-                className={`${
-                  addedToCart ? "bg-gray-400" : "bg-blue-600"
-                } text-white px-6 py-2 transition-all duration-200 rounded-md hover:bg-blue-700`}
-                onClick={handleAddToCart}
-                aria-label="Add to cart"
-                disabled={addedToCart}
-              >
-                {addedToCart ? "Added to Cart" : "Add to Cart"}
-              </Button>
-              <Button className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700">
-                Buy Now
-              </Button>
-            </div>
+            <Button
+              onClick={handleBuyNow}
+              className="flex-1 flex items-center gap-2 text-md text-white"
+            >
+              <CreditCard size={20} /> Acheter
+            </Button>
           </div>
         </div>
-
-        {/* Related Products */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-semibold mb-4 text-center md:text-start">
-            Related Products
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {relatedProducts.map((product) => (
-              <Card
-                key={product.id}
-                className="p-2 shadow-lg hover:shadow-xl transition-all"
-              >
-                <Link
-                  href={`/shop/${product.id}`}
-                  className="w-full h-52 flex justify-center items-center overflow-hidden rounded-lg"
-                >
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    width={220}
-                    height={220}
-                    className="w-full h-full"
-                  />
-                </Link>
-                <CardContent className="mt-2 text-center">
-                  <h2 className="text-lg">{product.name}</h2>
-                  <p className="text-gray-600">${product.price}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        {/* Image Modal */}
-        {isModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-4 rounded-lg max-w-full max-h-full overflow-auto relative">
-              <button
-                onClick={closeModal}
-                className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 text-3xl"
-              >
-                &times;
-              </button>
-              <Image
-                src={modalImage}
-                alt={product.name}
-                width={800}
-                height={800}
-                className="object-contain w-full max-h-[90vh]"
-              />
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

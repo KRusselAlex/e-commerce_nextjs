@@ -8,7 +8,7 @@ import { UserTypes } from '@/types/user';
 import crypto from 'crypto';
 
 
-// Register a new user
+
 export async function POST(request: Request) {
     try {
         const { db } = await connectToDatabase();
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
         const existingUser = await db.collection('users').findOne({ email });
         if (existingUser) {
-            return sendResponse(409, false, 'User already exists', null, {
+            return sendResponse(409, false, 'User with this email already exists', null, {
                 code: 409,
                 details: 'User with this email already exists',
             });
@@ -47,6 +47,8 @@ export async function POST(request: Request) {
             email,
             password: hashedPassword,
             name,
+            role: 'user',
+            status: 'active',
             isVerified: false,
             verificationToken,
             verificationExpires,

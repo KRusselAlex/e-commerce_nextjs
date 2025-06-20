@@ -2,7 +2,7 @@ import * as React from "react";
 import {
   ShoppingCart,
   FileText,
-  User,
+  // User,
   Settings,
   ChevronDown,
   ChevronRight,
@@ -35,10 +35,7 @@ const data = {
       title: "Tableau de bord",
       url: "#",
       icon: <FileText className="h-5 w-5" />,
-      items: [
-        { title: "Aperçu", url: "/oniichan", isActive: true },
-        { title: "Analytique", url: "/oniichan/home/analytics" },
-      ],
+      items: [{ title: "Analytique", url: "/oniichan" }],
     },
     {
       title: "Gestion de la boutique",
@@ -54,21 +51,18 @@ const data = {
       title: "Commandes",
       url: "#",
       icon: <ShoppingCart className="h-5 w-5" />,
-      items: [
-        { title: "Liste des commandes", url: "#" },
-        { title: "Statut des commandes", url: "#" },
-      ],
+      items: [{ title: "Liste des commandes", url: "/oniichan/order" }],
     },
-    {
-      title: "Gestion des utilisateurs",
-      url: "#",
-      icon: <User className="h-5 w-5" />,
-      items: [
-        { title: "Liste des utilisateurs", url: "#" },
-        // { title: "Rôles & Permissions", url: "#" },
-        // { title: "Support client", url: "#" },
-      ],
-    },
+    // {
+    //   title: "Gestion des utilisateurs",
+    //   url: "#",
+    //   icon: <User className="h-5 w-5" />,
+    //   items: [
+    //     { title: "Liste des utilisateurs", url: "#" },
+    //     // { title: "Rôles & Permissions", url: "#" },
+    //     // { title: "Support client", url: "#" },
+    //   ],
+    // },
     {
       title: "Paramètres",
       url: "#",
@@ -88,7 +82,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href="#">
+              <div>
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-sidebar-primary-foreground">
                   <Logo />
                 </div>
@@ -97,7 +91,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     Feudjeu Corp
                   </span>
                 </div>
-              </Link>
+              </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -132,10 +126,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <SidebarMenuSub>
                         {item.items.map((subItem) => (
                           <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton
-                              asChild
-                              isActive={subItem.isActive || false}
-                            >
+                            <SidebarMenuSubButton asChild isActive={false}>
                               <Link href={subItem.url}>{subItem.title}</Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>

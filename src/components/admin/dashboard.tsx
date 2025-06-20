@@ -13,7 +13,6 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Bell, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { getBreadCrumbFromPath } from "@/lib/utils/get-breadcrumb";
@@ -51,11 +50,11 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
 
           {/* Right side */}
           <div className="flex items-center gap-4">
-            <Bell className="h-6 w-6 text-gray-600 cursor-pointer" />
+            {/* <Bell className="h-6 w-6 text-gray-600 cursor-pointer" />
             <div className="flex items-center gap-2">
               <UserCircle className="h-6 w-6 text-gray-600" />
               <span className="hidden md:block font-medium">John Doe</span>
-            </div>
+            </div> */}
             <Link href={"/shop"}>
               <Button variant="default" className="text-white">
                 Go to Shop

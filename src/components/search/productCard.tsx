@@ -3,6 +3,9 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Tag } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useCartStore } from "@/store/cartStore";
 
 interface ProductCardProps {
   name: string;
@@ -17,6 +20,26 @@ const ProductCard: React.FC<ProductCardProps> = ({
   image,
   id,
 }) => {
+  const { addToCart, fetchCart } = useCartStore();
+
+  const router = useRouter();
+
+  const user =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("userFeudjo") || "null")
+      : null;
+
+  const handleAddToCart = async () => {
+    if (!user?.id) {
+      toast.error("Veuillez vous connecter d'abord.");
+      router.push("/auth/login");
+      return;
+    }
+    await addToCart(id, user.id, 1);
+    await fetchCart(user.id);
+    toast.success(`${1} ajouté(s) au panier`);
+  };
+
   return (
     <div className="flex items-center border rounded-xl shadow-sm p-2 bg-white hover:shadow-md transition">
       <Link
@@ -37,7 +60,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {price}
         </div>
       </div>
-      <Button size="sm" className="ml-2 flex items-center text-white gap-1">
+      <Button
+        size="sm"
+        className="ml-2 flex items-center text-white gap-1"
+        onClick={handleAddToCart}
+      >
         <ShoppingCart className="w-4 h-4" />
         Ajouter
       </Button>

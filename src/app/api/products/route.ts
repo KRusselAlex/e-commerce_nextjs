@@ -5,6 +5,25 @@ import { formatZodErrors } from '@/lib/formatZodErrors';
 import { ProductTypes } from '@/types/product';
 import { ObjectId } from 'mongodb';
 
+// Example: product.ts
+export interface ProductDocument {
+    _id: ObjectId;
+    name: string;
+    description: string;
+    price: number;
+    category: string | ObjectId;
+    stockQuantity: number;
+    // Other fields...
+    images?: string[];
+}
+
+export interface ImageDocument {
+    _id: ObjectId;
+    productId: ObjectId;
+    url: string;
+}
+
+
 export async function GET(request: Request) {
     try {
         const { db } = await connectToDatabase();
@@ -13,36 +32,30 @@ export async function GET(request: Request) {
         const limit = parseInt(url.searchParams.get('limit') || '10', 10);
         const skip = (page - 1) * limit;
 
-        // Fetch products with pagination
-        const products = await db.collection('products')
+        const products = await db.collection<ProductDocument>('products')
             .find({})
             .skip(skip)
             .limit(limit)
             .toArray();
 
-        // Get all product IDs
-        const productIds = products.map((product: any) => product._id);
+        const productIds = products.map((product) => product._id);
 
-        // Fetch images associated with these products
-        const images = await db.collection('images')
+        const images = await db.collection<ImageDocument>('images')
             .find({ productId: { $in: productIds } })
             .toArray();
 
-        // Map images to products
         const imagesByProductId: Record<string, string[]> = {};
-        images.forEach((img: any) => {
+        images.forEach((img) => {
             const pid = img.productId.toString();
             if (!imagesByProductId[pid]) imagesByProductId[pid] = [];
             if (img.url) imagesByProductId[pid].push(img.url);
         });
 
-        // Attach images to each product
-        const productsWithImages = products.map((product: any) => ({
+        const productsWithImages = products.map((product) => ({
             ...product,
             images: imagesByProductId[product._id.toString()] || [],
         }));
 
-        // Get total count for pagination metadata
         const totalCount = await db.collection('products').countDocuments();
 
         return sendResponse(200, true, 'Products fetched successfully', {
@@ -59,6 +72,7 @@ export async function GET(request: Request) {
         });
     }
 }
+
 
 
 export async function POST(request: Request) {

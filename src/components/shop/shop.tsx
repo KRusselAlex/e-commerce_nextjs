@@ -15,6 +15,7 @@ import { useCategoryStore } from "@/store/categorieStore";
 import { useEffect } from "react";
 import { useProductStore } from "@/store/productStore";
 import Loading from "../loading/loading";
+import { useCartStore } from "@/store/cartStore";
 
 export default function ShopSection() {
   const [category, setCategory] = useState("Tous");
@@ -23,7 +24,13 @@ export default function ShopSection() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
 
+  const user =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("userFeudjo") || "null")
+      : null;
+
   useEffect(() => {
+    useCartStore.getState().fetchCart(user.id);
     useProductStore.getState().fetchProducts();
     useCategoryStore.getState().fetchCategories();
   }, []);
@@ -84,7 +91,7 @@ export default function ShopSection() {
                     Tous
                   </SelectItem>
                   {categories.map((cat) => (
-                    <SelectItem key={cat._id} value={cat.name}>
+                    <SelectItem key={cat._id?.toString()} value={cat.name}>
                       {cat.name}
                     </SelectItem>
                   ))}
@@ -129,24 +136,42 @@ export default function ShopSection() {
             displayedProducts.map((product) => (
               <Card
                 key={product._id?.toString() ?? product.name}
-                className="p-2 shadow-lg hover:shadow-xl transition-all"
+                className="flex flex-col justify-between h-[410px] p-3 shadow-lg hover:shadow-xl transition-all bg-white"
               >
                 <Link href={`/shop/${product._id}`} passHref legacyBehavior>
-                  <a className="w-full h-full flex justify-center items-center overflow-hidden rounded-lg">
-                    <div className="w-full h-[250px] relative bg-white rounded-lg">
-                      <Image
-                        src={product.images?.[0] || "/placeholder.png"}
-                        alt={product.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        className="rounded-lg object-cover"
-                      />
-                    </div>
+                  <a className="block h-[220px] w-full relative overflow-hidden rounded-lg">
+                    <Image
+                      src={product.images?.[0] || "/placeholder.png"}
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="rounded-lg object-cover"
+                    />
                   </a>
                 </Link>
-                <CardContent className="mt-2 text-center">
-                  <h2 className="text-lg">{product.name}</h2>
-                  <p className="text-gray-600">{product.price}€</p>
+
+                <CardContent className="mt-3 flex flex-col justify-between flex-grow">
+                  <div className="flex flex-col items-start gap-1 text-left">
+                    <h2 className="text-md font-semibold line-clamp-2 text-gray-900">
+                      {product.name}
+                    </h2>
+                    {product.description && (
+                      <p className="text-sm text-gray-600 line-clamp-3">
+                        {product.description}
+                      </p>
+                    )}
+                    {/* {product.categoryName && (
+                      <p className="text-xs text-primary mt-1 italic">
+                        {product.categoryName}
+                      </p>
+                    )} */}
+                  </div>
+
+                  <div className="mt-3 text-right">
+                    <span className="text-lg font-bold text-green-700">
+                      {product.price} €
+                    </span>
+                  </div>
                 </CardContent>
               </Card>
             ))

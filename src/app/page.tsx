@@ -7,6 +7,7 @@ import ServicesSection from "@/components/home/service/service";
 import TestimonialCarousel from "@/components/home/testimony/testimony";
 import Navbar from "@/components/navbar/navbar";
 
+
 export default function Home() {
   return (
     <div>

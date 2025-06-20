@@ -1,49 +1,57 @@
+// middleware.ts (or middleware helper)
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAccessToken } from '@/lib/jwtUtils';
-import { sendResponse } from '@/lib/apiResponse';
+import { verifyAccessToken, verifyRefreshToken, generateAccessToken } from '@/lib/jwtUtils';
+import { sendEdgeResponse } from '@/lib/sendEdgeResponse';
 
-const publicRoutes = ['/api/auth/login', '/api/auth/register'];
+const publicRoutes = ['/api/auth/login', '/api/auth/register', '/api/auth/password-reset'];
 
 export async function authMiddleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // Allow public routes to pass through
+    // Allow public routes
     if (publicRoutes.includes(pathname)) {
         return NextResponse.next();
     }
 
-    // Extract token from the Authorization header
     const authHeader = request.headers.get('Authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return NextResponse.json(
-            { success: false, message: 'Unauthorized: No token provided' },
-            { status: 401 }
-        );
+    if (!authHeader?.startsWith('Bearer ')) {
+        return sendEdgeResponse(401, 'Unauthorized: No token provided');
     }
 
-    const token = authHeader.replace('Bearer ', '');
+    const token = authHeader.split(' ')[1];
 
     try {
         const decoded = verifyAccessToken(token);
-
         if (!decoded) {
-            return NextResponse.json(
-                { success: false, message: 'Unauthorized: Invalid token' },
-                { status: 401 }
-            );
+            throw new Error('Invalid token');
         }
 
-        request.headers.set('userId', decoded.userId);
-        return NextResponse.next();
-        
+        // Add userId header for downstream handlers
+        const response = NextResponse.next();
+        response.headers.set('userId', decoded.userId);
+        return response;
     } catch (error) {
+        // Attempt refresh if refreshToken cookie exists
+        console.error('Access token verification failed:', error);
+        const refreshToken = request.cookies.get('refreshToken')?.value;
+        if (!refreshToken) {
+            return sendEdgeResponse(401, 'Unauthorized: Invalid token and no refresh token');
+        }
 
-        return sendResponse(401, false, 'Unauthorized: Invalid token', null, {
-            code: 401,
-            details: error,
-        });
-        
+        try {
+            const refreshDecoded = verifyRefreshToken(refreshToken);
+            if (!refreshDecoded) {
+                throw new Error('Invalid refresh token');
+            }
+            const newAccessToken = generateAccessToken({ userId: refreshDecoded?.userId });
+
+            const response = NextResponse.next();
+            response.headers.set('Authorization', `Bearer ${newAccessToken}`);
+            response.headers.set('userId', refreshDecoded.userId);
+            return response;
+        } catch (refreshError) {
+            console.error('Refresh token verification failed:', refreshError);
+            return sendEdgeResponse(401, 'Session expired. Please log in again.');
+        }
     }
-   
-    
 }

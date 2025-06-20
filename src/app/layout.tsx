@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ScrollUpButton from "@/components/scrollUp/scrollUp";
+import { Toaster } from "sonner";
 
 import "./globals.css";
 import WhatsappWidget from "@/components/whatsapp/whatsappWidjet";
@@ -43,8 +44,6 @@ export const metadata: Metadata = {
   },
 };
 
-
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -53,10 +52,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div>{children}
+        <main>
+          {children}
           <WhatsappWidget />
           <ScrollUpButton />
-        </div>
+        </main>
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );

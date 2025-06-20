@@ -48,8 +48,12 @@ export const useCategoryStore = create<CategoryStore>((set) => ({
             const data = await res.json();
             console.log("Fetched categories:", data.data);
             set({ categories: data?.data, loading: false });
-        } catch (err: any) {
-            set({ error: err.message || "Unknown error", loading: false });
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                set({ error: err.message, loading: false });
+            } else {
+                set({ error: "Unknown error", loading: false });
+            }
         }
     },
 }));
