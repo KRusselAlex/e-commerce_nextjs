@@ -1,9 +1,9 @@
-"use client";
+// src/components/error/errorPage.tsx
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-interface ErrorPageProps {
+export interface ErrorPageProps {
   title?: string;
   message: string;
   actionLabel?: string;

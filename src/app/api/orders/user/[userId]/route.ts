@@ -5,11 +5,11 @@ import { NextRequest } from "next/server";
 import { ObjectId } from "mongodb";
 
 export async function GET(
-    request: NextRequest,
-    { params }: { params: { userId: string } }
+    request: NextRequest
 ) {
     try {
-        const { userId } = params;
+        const url = new URL(request.url);
+        const userId = url.pathname.split("/").pop();
 
         if (!userId || !ObjectId.isValid(userId)) {
             return sendResponse(400, false, "Invalid user ID", null, {

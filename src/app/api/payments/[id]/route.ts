@@ -14,11 +14,11 @@ const updatePaymentSchema = z.object({
 });
 
 export async function GET(
-    request: NextRequest,
-    { params }: { params: { id: string } }
+    request: NextRequest
 ) {
     try {
-        const { id } = params;
+        const url = new URL(request.url);
+        const id = url.pathname.split("/").pop();
 
         if (!id || !ObjectId.isValid(id)) {
             return sendResponse(400, false, "Invalid payment ID", null, {
@@ -64,11 +64,11 @@ export async function GET(
 }
 
 export async function PUT(
-    request: NextRequest,
-    { params }: { params: { id: string } }
+    request: NextRequest
 ) {
     try {
-        const { id } = params;
+        const url = new URL(request.url);
+        const id = url.pathname.split("/").pop();
 
         if (!id || !ObjectId.isValid(id)) {
             return sendResponse(400, false, "Invalid payment ID", null, {

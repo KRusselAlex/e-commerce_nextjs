@@ -68,11 +68,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PUT(
-    request: NextRequest,
-    { params }: { params: { id: string } }
+    request: NextRequest
 ) {
     try {
-        const { id } = params;
+        const url = new URL(request.url);
+        const id = url.pathname.split("/").pop();
 
         if (!id || !ObjectId.isValid(id)) {
             return sendResponse(400, false, "Invalid cart ID", null, {

@@ -6,16 +6,14 @@ import { ObjectId } from 'mongodb';
 import cloudinary from '@/lib/cloudinaryConfig';
 
 export async function DELETE(
-    request: NextRequest,
-    { params }: { params: { imageId: string } }
+    request: NextRequest
 ) {
     try {
         const { db } = await connectToDatabase();
-        const { imageId } = params;
 
-        if (!ObjectId.isValid(imageId)) {
-            return sendResponse(400, false, 'Invalid Image ID');
-        }
+        const url = new URL(request.url);
+        const imageId = url.pathname.split("/").pop();
+
 
         const imageObjectId = new ObjectId(imageId);
 

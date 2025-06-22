@@ -12,12 +12,15 @@ const categorySchema = z.object({
 });
 
 // GET: Fetch category by ID
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest) {
     try {
         const { db } = await connectToDatabase();
 
+        const url = new URL(request.url);
+        const id = url.pathname.split("/").pop();
+
         const category = await db.collection('categories').findOne({
-            _id: new ObjectId(params.id),
+            _id: new ObjectId(id),
         });
 
         if (!category) {
@@ -38,10 +41,12 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
 // PUT: Update category by ID
 export async function PUT(
-    request: NextRequest,
-    { params }: { params: { id: string } }
+    request: NextRequest
 ) {
     try {
+
+        const url = new URL(request.url);
+        const id = url.pathname.split("/").pop();
         const { db } = await connectToDatabase();
         const body = await request.json();
 
@@ -56,7 +61,7 @@ export async function PUT(
 
         // ID validation
         const isValidObjectId = (id: string) => /^[0-9a-fA-F]{24}$/.test(id);
-        if (!params.id || !isValidObjectId(params.id)) {
+        if (!id || !isValidObjectId(id)) {
             return sendResponse(400, false, 'Invalid ID format', null, {
                 code: 400,
                 details: 'The provided ID is not a valid MongoDB ObjectId.',
@@ -72,7 +77,7 @@ export async function PUT(
         };
 
         const result = await db.collection('categories').updateOne(
-            { _id: new ObjectId(params.id) },
+            { _id: new ObjectId(id) },
             { $set: updatedCategory }
         );
 
@@ -94,12 +99,15 @@ export async function PUT(
   
 
 // DELETE: Delete category by ID
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest) {
     try {
+
+        const url = new URL(request.url);
+        const id = url.pathname.split("/").pop();
         const { db } = await connectToDatabase();
 
         const isValidObjectId = (id: string) => /^[0-9a-fA-F]{24}$/.test(id);
-        if (!params.id || !isValidObjectId(params.id)) {
+        if (!id || !isValidObjectId(id)) {
             return sendResponse(400, false, 'Invalid ID format', null, {
                 code: 400,
                 details: 'The provided ID is not a valid MongoDB ObjectId.',
@@ -107,7 +115,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
         }
 
         const result = await db.collection('categories').deleteOne({
-            _id: new ObjectId(params.id),
+            _id: new ObjectId(id),
         });
 
         if (result.deletedCount === 0) {

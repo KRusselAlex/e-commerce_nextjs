@@ -4,14 +4,14 @@ import { sendResponse } from '@/lib/apiResponse';
 import { Image } from '@/types/image';
 import { ObjectId } from 'mongodb';
 
-export async function GET(request: NextRequest, { params }: { params: { productId: string } }) {
+export async function GET(request: NextRequest) {
     try {
         const { db } = await connectToDatabase();
-        const { productId } = params;
 
-        if (!ObjectId.isValid(productId)) {
-            return sendResponse(400, false, 'Invalid Product ID');
-        }
+        const url = new URL(request.url);
+        const productId = url.pathname.split("/").pop();
+
+
 
         const objectId = new ObjectId(productId);
 

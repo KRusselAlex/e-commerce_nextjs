@@ -40,9 +40,11 @@ export async function POST(request: Request) {
             email,
             password: hashedPassword,
             name,
-            isVerified:true,
+            isVerified: true,
             createdAt: new Date(),
             updatedAt: new Date(),
+            role: 'user',
+            status: 'active'
         };
 
         const result = await db.collection('users').insertOne(newUser);

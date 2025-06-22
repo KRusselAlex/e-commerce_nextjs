@@ -13,18 +13,13 @@ const updateOrderSchema = z.object({
 });
 
 export async function GET(
-    request: NextRequest,
-    { params }: { params: { id: string } }
+    request: NextRequest
 ) {
     try {
-        const { id } = params;
+        const url = new URL(request.url);
+        const id = url.pathname.split("/").pop();
 
-        if (!id || !ObjectId.isValid(id)) {
-            return sendResponse(400, false, "Invalid order ID", null, {
-                code: 400,
-                details: "Valid order ID is required.",
-            });
-        }
+
 
         const { db } = await connectToDatabase();
         const order = await db.collection("orders").findOne({ _id: new ObjectId(id) });
@@ -63,11 +58,11 @@ export async function GET(
 }
 
 export async function PUT(
-    request: NextRequest,
-    { params }: { params: { id: string } }
+    request: NextRequest
 ) {
     try {
-        const { id } = params;
+        const url = new URL(request.url);
+        const id = url.pathname.split("/").pop();
 
         if (!id || !ObjectId.isValid(id)) {
             return sendResponse(400, false, "Invalid order ID", null, {
@@ -131,11 +126,11 @@ const updateStatusSchema = z.object({
 });
 
 export async function PATCH(
-    request: NextRequest,
-    { params }: { params: { id: string } }
+    request: NextRequest
 ) {
     try {
-        const { id } = params;
+        const url = new URL(request.url);
+        const id = url.pathname.split("/").pop();
 
         if (!id || !ObjectId.isValid(id)) {
             return sendResponse(400, false, "Invalid order ID", null, {

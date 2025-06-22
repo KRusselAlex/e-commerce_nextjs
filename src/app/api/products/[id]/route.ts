@@ -8,12 +8,12 @@ import { ProductTypes } from '@/types/product';
 import cloudinary from '@/lib/cloudinaryConfig';
 
 export async function GET(
-    request: NextRequest,
-    context: { params: { id: string } }
+    request: NextRequest
 ) {
     try {
         const { db } = await connectToDatabase();
-        const id = context.params.id;
+        const url = new URL(request.url);
+        const id = url.pathname.split("/").pop();
 
 
         // Step 1: Find the product by _id
@@ -68,8 +68,10 @@ export async function GET(
     }
 }
 // Update a product
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest) {
     try {
+        const url = new URL(request.url);
+        const id = url.pathname.split("/").pop();
         const { db } = await connectToDatabase();
         const requestBody = await request.json();
 
@@ -91,7 +93,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
         // Update product in the database
         const result = await db.collection('products').updateOne(
-            { _id: new ObjectId(params.id) },
+            { _id: new ObjectId(id) },
             { $set: updatedProduct }
         );
 
@@ -114,10 +116,12 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // Delete a product by ID and its associated images
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest) {
     try {
+        const url = new URL(request.url);
+        const id = url.pathname.split("/").pop();
         const { db } = await connectToDatabase();
-        const productId = new ObjectId(params.id);
+        const productId = new ObjectId(id);
 
         // Fetch all images for the product
         const images = await db.collection('images').find({ productId }).toArray();
@@ -216,11 +220,11 @@ export async function POST(request: Request) {
 
 
 
-export async function deleteImage(publicId: string) {
-    try {
-        const result = await cloudinary.uploader.destroy(publicId);
-        return result; // { result: 'ok' } if successful
-    } catch (error) {
-        throw new Error(`Failed to delete image: ${error}`);
-    }
-}
+// export async function deleteImage(publicId: string) {
+//     try {
+//         const result = await cloudinary.uploader.destroy(publicId);
+//         return result; // { result: 'ok' } if successful
+//     } catch (error) {
+//         throw new Error(`Failed to delete image: ${error}`);
+//     }
+// }
