@@ -178,21 +178,36 @@ export default function Navbar() {
                 </Link>
               </li>
             ))}
-            {isAuthenticated && (
-              <li>
-                <Link
-                  href="/order"
-                  onClick={() => setIsOpen(false)}
-                  className={`block px-3 py-2 transition-colors ${
-                    pathname === "/orders"
-                      ? "text-primary"
-                      : "text-textColor hover:text-primary"
-                  }`}
-                >
-                  Mes Commandes
-                </Link>
-              </li>
-            )}
+            {isAuthenticated &&
+              (user.role === "admin" ? (
+                <li>
+                  <Link
+                    href="/oniichan"
+                    onClick={() => setIsOpen(false)}
+                    className={`block px-3 py-2 transition-colors ${
+                      pathname === "/orders"
+                        ? "text-primary"
+                        : "text-textColor hover:text-primary"
+                    }`}
+                  >
+                    Dashboard
+                  </Link>
+                </li>
+              ) : (
+                <li>
+                  <Link
+                    href="/order"
+                    onClick={() => setIsOpen(false)}
+                    className={`block px-3 py-2 transition-colors ${
+                      pathname === "/orders"
+                        ? "text-primary"
+                        : "text-textColor hover:text-primary"
+                    }`}
+                  >
+                    Mes Commandes
+                  </Link>
+                </li>
+              ))}
             {!isAuthenticated ? (
               <li>
                 <Link

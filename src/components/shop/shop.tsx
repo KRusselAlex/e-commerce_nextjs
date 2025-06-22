@@ -30,7 +30,9 @@ export default function ShopSection() {
       : null;
 
   useEffect(() => {
-    useCartStore.getState().fetchCart(user.id);
+    if (user && user.id) {
+      useCartStore.getState().fetchCart(user.id);
+    }
     useProductStore.getState().fetchProducts();
     useCategoryStore.getState().fetchCategories();
   }, []);

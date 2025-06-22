@@ -34,7 +34,7 @@ type OrderStatus = "completed" | "pending" | "refunded";
 interface Order {
   _id: string;
   name: string;
-  totalPrice: number;
+  totalAmount: number;
   status: OrderStatus;
 }
 
@@ -70,9 +70,10 @@ export default function AdminAnalyticsPage() {
           getProducts(),
           getUsers(),
         ]);
-        setOrders(ordersRes.data);
-        setProducts(productsRes.data.data.prod);
-        setUsers(usersRes.data);
+        console.log("orders", ordersRes.data.data);
+        setOrders(ordersRes?.data.data);
+        setProducts(productsRes.data.data.products);
+        setUsers(usersRes.data.data);
       } catch (error) {
         console.error("Error fetching analytics data:", error);
       } finally {
@@ -85,6 +86,8 @@ export default function AdminAnalyticsPage() {
 
   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
 
+  console.log("orders", orders);
+
   const bestSelling = products
     .map((p) => ({ name: p.name, sales: p.sales || 0 }))
     .sort((a, b) => b.sales - a.sales)
@@ -92,7 +95,7 @@ export default function AdminAnalyticsPage() {
 
   const orderStatusSummary = orders.reduce(
     (acc, order) => {
-      acc.totalRevenue += order.totalPrice || 0;
+      acc.totalRevenue += order.totalAmount || 0;
       acc.totalOrders += 1;
 
       switch (order.status) {
@@ -129,7 +132,7 @@ export default function AdminAnalyticsPage() {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">
-                ${orderStatusSummary.totalRevenue.toLocaleString()}
+                {orderStatusSummary.totalRevenue.toLocaleString()} CFA
               </p>
             </CardContent>
           </Card>
@@ -253,14 +256,17 @@ export default function AdminAnalyticsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {orders.slice(0, 5).map((order) => (
-                    <TableRow key={order._id}>
-                      <TableCell>{order._id}</TableCell>
-                      <TableCell>{order.name}</TableCell>
-                      <TableCell>${order.totalPrice.toFixed(2)}</TableCell>
-                      <TableCell>{order.status}</TableCell>
-                    </TableRow>
-                  ))}
+                  {orders &&
+                    orders.slice(0, 5).map((order) => (
+                      <TableRow key={order._id}>
+                        <TableCell>{order._id}</TableCell>
+                        <TableCell>{order.name}</TableCell>
+                        <TableCell>
+                          {order.totalAmount?.toFixed(2)} CFA
+                        </TableCell>
+                        <TableCell>{order.status}</TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
             </CardContent>
