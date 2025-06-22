@@ -87,28 +87,31 @@ import { ShoppingCart } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import CartItemCard from "./cartItem";
 
+
+
 const CartModal: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { cartItems, fetchCart} = useCartStore();
+  const { cartItems, fetchCart } = useCartStore();
 
-    const user =
-      typeof window !== "undefined"
-        ? JSON.parse(localStorage.getItem("userFeudjo") || "null")
-        : null;
-
-    useEffect(() => {
-      const loadCart = async () => {
-        try {
+  const user =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("userFeudjo") || "null")
+      : null;
+  useEffect(() => {
+    const loadCart = async () => {
+      try {
+        if (user && user.id) {
           await fetchCart(user.id);
-
-        } catch (error) {
-          console.error("Erreur lors du chargement du panier:", error);
-
+        } else {
+          console.warn("Aucun utilisateur trouvé dans le localStorage.");
         }
-      };
+      } catch (error) {
+        console.error("Erreur lors du chargement du panier:", error);
+      }
+    };
 
-      loadCart();
-    }, []);
+    loadCart();
+  }, []);
 
   const handleCheckout = () => {
     // This is where you would initiate the payment process
