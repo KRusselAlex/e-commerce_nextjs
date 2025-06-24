@@ -19,7 +19,7 @@ export default function HeroSection() {
           {content.title}
         </h1>
         <div className="flex justify-center">
-          <Link href="/register">
+          <Link href="/shop">
             <CustomButton
               icon={<ChevronRight size={20} />}
               className="bg-primary text-white hover:bg-secondary hover:text-white"

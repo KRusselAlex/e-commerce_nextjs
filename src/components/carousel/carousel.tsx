@@ -14,24 +14,12 @@ import { useProductStore } from "@/store/productStore"; // adjust the path if ne
 
 export default function CarouselProduct() {
   const [api, setApi] = React.useState<CarouselApi | null>(null);
-  const { products, fetchProducts, loading } = useProductStore();
-
-  const [refreshed, setRefreshed] = React.useState(false);
+  const { products, fetchProducts } = useProductStore();
 
   // Fetch products on mount
   React.useEffect(() => {
-    if (products.length === 0 && !loading) {
-      fetchProducts();
-    }
+    fetchProducts();
   }, []);
-
-  // If products are still empty after first load, try once more
-  React.useEffect(() => {
-    if (!refreshed && !loading && products.length === 0) {
-      setRefreshed(true);
-      fetchProducts();
-    }
-  }, [products, loading]);
 
   // Auto-slide
   React.useEffect(() => {

@@ -59,7 +59,7 @@ export function RegisterForm({
       // Remove confirmPassword before sending to API
       // const { confirmPassword, ...submitData } = data;
       await registerUser(data);
-      navigate.push("/login"); // Redirect to login after successful registration
+      navigate.push("/auth/login"); 
       toast.success("Registration successful! Please check your email.");
     } catch (error: unknown) {
       const message =

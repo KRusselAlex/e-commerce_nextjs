@@ -150,7 +150,8 @@ export default function ProductEditor({ id }: Props) {
       // Clear the new images preview
       setImages([]);
 
-      toast.success("Images envoyées.");
+      toast.success("Images Updated.");
+      router.push("/oniichan/shop/product");
     } catch (e) {
       console.error(e);
       toast.error("Échec de l'envoi des images.");
@@ -163,9 +164,9 @@ export default function ProductEditor({ id }: Props) {
     try {
       await deleteProduct(id);
       toast.success("Produit supprimé.");
-      router.push("/products");
+      router.push("/oniichan/shop/product");
     } catch (e) {
-        console.error(e);
+      console.error(e);
       toast.error("Échec de la suppression.");
     }
   };

@@ -9,7 +9,8 @@ export const metadata: Metadata = {
   title: "Store - Produits et Équipements de Laboratoire",
   description:
     "Découvrez une large gamme de produits et d'équipements de laboratoire pour la chimie, la physique, la biologie et plus encore. Qualité professionnelle garantie pour vos besoins scientifiques.",
-  icons: "/LOGO2.jpg",
+  icons: "/logo2.png",
+
   keywords: [
     "produits laboratoire",
     "équipements chimie",
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
     siteName: "store",
     images: [
       {
-        url: "https://e-commerce-nextjs-lemon.vercel.app/meta.jpeg",
+        url: "/meta.jpeg",
         width: 1200,
         height: 630,
         alt: "Store - Produits et Équipements de Laboratoire",
@@ -40,7 +41,7 @@ export const metadata: Metadata = {
     title: "Store - Vente de Produits et Équipements de Laboratoire",
     description:
       "Commandez vos fournitures et équipements scientifiques en ligne avec A-Space. Qualité et fiabilité au service des laboratoires.",
-    images: ["https://e-commerce-nextjs-lemon.vercel.app/meta.jpg"],
+    images: ["/meta.jpg"],
   },
 };
 

@@ -125,7 +125,7 @@ export default function CreateProductForm() {
     try {
       await uploadProductImages(form); // Don't pass productId in the URL anymore
       toast.success("Images ajoutées avec succès !");
-      router.push("/products");
+      router.push("/oniichan/shop/product");
     } catch (error) {
       console.error("Erreur lors de l'envoi des images", error);
       toast.error("Échec de l'envoi des images.");
