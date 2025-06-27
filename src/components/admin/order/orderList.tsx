@@ -14,24 +14,33 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { getOrders, updateOrder } from "@/lib/api";
 
+// Types
 type OrderItem = {
   name: string;
   quantity: number;
   price: number;
+  image?: string;
 };
 
+type OrderClient = {
+  _id: string;
+  name: string;
+  email: string;
+};
 
 type Order = {
   _id: string;
-  referenceId: string;
+  referenceId?: string;
   userId: string;
   status: string;
-  paymentStatus: string;
+  paymentStatus?: string;
   totalAmount: number;
   createdAt: string;
   items: OrderItem[];
+  client?: OrderClient;
 };
 
+// UI helpers
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-yellow-200 text-yellow-800",
   processing: "bg-blue-200 text-blue-800",
@@ -55,7 +64,6 @@ export default function AdminOrdersPage() {
   const [paymentFilter, setPaymentFilter] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const perPage = 10;
-
   const totalPages = Math.ceil(filtered.length / perPage);
 
   useEffect(() => {
@@ -65,20 +73,18 @@ export default function AdminOrdersPage() {
   const fetchOrders = async () => {
     try {
       const res = await getOrders();
+      console.log("Fetched orders:", res.data.data);
       setOrders(res.data.data);
       setFiltered(res.data.data);
     } catch (err) {
-        console.error("Erreur de chargement des commandes", err);
+      console.error("Erreur de chargement des commandes", err);
       toast.error("Erreur de chargement des commandes");
     }
   };
 
-  const handleStatusChange = async (orderId: string, newStatus:string ) => {
-
-
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
     try {
-      
-      await updateOrder(orderId,newStatus );
+      await updateOrder(orderId, newStatus);
       const updated = orders.map((o) =>
         o._id === orderId ? { ...o, status: newStatus } : o
       );
@@ -104,6 +110,7 @@ export default function AdminOrdersPage() {
   }, [statusFilter, paymentFilter]);
 
   const paginated = filtered.slice((page - 1) * perPage, page * perPage);
+  console.log("Paginated orders:", paginated);
 
   return (
     <div className="p-6">
@@ -146,32 +153,46 @@ export default function AdminOrdersPage() {
           <Card key={order._id} className="mb-4">
             <CardHeader className="flex flex-col md:flex-row justify-between gap-2">
               <div>
-                <CardTitle>Commande {order.referenceId}</CardTitle>
+                <CardTitle>
+                  Commande:{" "}
+                  <span className="text-primary">
+                    {order.referenceId ?? order._id}
+                  </span>
+                </CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  Client ID: {order.userId}
+                  Client: <strong>{order.client?.name ?? "Inconnu"}</strong> (
+                  {order.client?.email ?? "Email inconnu"})
                 </p>
                 <p className="text-sm">
-                  Le {new Date(order.createdAt).toLocaleDateString()} | Total:{" "}
-                  {order.totalAmount} FCFA
+                  Le {new Date(order.createdAt).toLocaleString()}
                 </p>
               </div>
               <div className="flex flex-col md:items-end gap-2">
                 <Badge className={STATUS_COLORS[order.status]}>
                   {order.status}
                 </Badge>
-                <Badge className={PAYMENT_BADGE[order.paymentStatus]}>
-                  {order.paymentStatus}
-                </Badge>
+                {order.paymentStatus && (
+                  <Badge className={PAYMENT_BADGE[order.paymentStatus]}>
+                    {order.paymentStatus}
+                  </Badge>
+                )}
               </div>
             </CardHeader>
             <CardContent className="space-y-2">
               <ul className="text-sm">
                 {order.items.map((item, i) => (
                   <li key={i}>
-                    {item.name} × {item.quantity} — {item.price} FCFA
+                    {item.name} × {item.quantity} —{" "}
+                    {item.price.toLocaleString()} FCFA (Total:{" "}
+                    {(item.quantity * item.price).toLocaleString()} FCFA)
                   </li>
                 ))}
               </ul>
+
+              <p className="text-sm mt-2 text-muted-foreground">
+                Total articles:{" "}
+                {order.items.reduce((sum, item) => sum + item.quantity, 0)}
+              </p>
 
               <div className="flex items-center gap-2 mt-4">
                 <label className="text-sm font-medium">Changer statut :</label>

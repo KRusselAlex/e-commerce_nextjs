@@ -7,6 +7,7 @@ export interface OrderItem extends Omit<CartItem, "productId"> {
   productId: string; // Use string for readability in frontend/UI
 }
 
+
 export interface Order {
   _id?: ObjectId | string; // Use ObjectId for backend, string for frontend
   userId: ObjectId | string; // Use ObjectId for backend, string for frontend
@@ -18,3 +19,4 @@ export interface Order {
   createdAt?: Date;
   updatedAt?: Date;
 }
+

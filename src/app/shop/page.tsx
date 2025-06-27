@@ -10,18 +10,17 @@ export default function Shop() {
     <div>
       <div className="heroNav bg-primary text-white">
         <Navbar />
-        <div className="h-12"></div>
-        <div className="flex flex-col h-full w-full justify-center p-2 items-center">
-          <h1 className="text-xl md:text-4xl font-bold text-center mb-4">
+        <div className="h-12" />
+        <div className="flex flex-col h-full w-full justify-center p-4 items-center">
+          <h1 className="text-xl md:text-4xl font-bold text-center mb-2">
             BOUTIQUE
           </h1>
-          <p className="text-center mb-8">
-            NOS PRODUITS D&apos;ÉQUIPEMENT DE LABORATOIRE
+          <p className="text-center text-sm md:text-base mb-6 max-w-xl">
+            Découvrez nos équipements de laboratoire modernes et fiables.
           </p>
         </div>
       </div>
       <ShopSection />
-
       <Footer />
     </div>
   );

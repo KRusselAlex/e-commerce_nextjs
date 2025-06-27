@@ -130,23 +130,105 @@ export async function POST(request: NextRequest) {
 }
 
 
+// export async function GET() {
+//     try {
+//         const { db } = await connectToDatabase();
+
+//         const orders = await db.collection("orders").find({}).sort({ createdAt: -1 }).toArray();
+
+//         if (!orders || orders.length === 0) {
+//             return sendResponse(200, true, "No orders found", []);
+//         }
+
+//         // Format response (convert ObjectIds to strings)
+//         const formattedOrders = orders.map((order) => ({
+//             ...order,
+//             _id: order._id.toString(),
+//             userId: order.userId.toString(),
+//             createdAt: order.createdAt?.toISOString(),
+//             updatedAt: order.updatedAt?.toISOString(),
+//         }));
+
+//         return sendResponse(200, true, "Orders fetched successfully", formattedOrders);
+//     } catch (error: unknown) {
+//         let errorMessage = "Unknown error";
+
+//         if (error instanceof Error) {
+//             errorMessage = error.message;
+//         } else if (typeof error === "string") {
+//             errorMessage = error;
+//         }
+
+//         console.error("Caught error:", errorMessage);
+//         return sendResponse(500, false, "Failed to fetch orders", null, {
+//             code: 500,
+//             details: errorMessage,
+//         });
+//     }
+// }
+
+
 export async function GET() {
     try {
         const { db } = await connectToDatabase();
 
-        const orders = await db.collection("orders").find({}).sort({ createdAt: -1 }).toArray();
+        const orders = await db
+            .collection("orders")
+            .aggregate([
+                {
+                    $sort: { createdAt: -1 }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "userId",
+                        foreignField: "_id",
+                        as: "client" // renamed from "user" to "client"
+                    }
+                },
+                {
+                    $unwind: {
+                        path: "$client",
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        userId: 1,
+                        referenceId: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+                        status: 1,
+                        items: 1,
+                        totalAmount: 1,
+                        // Client details
+                        "client._id": 1,
+                        "client.name": 1,
+                        "client.email": 1,
+
+                    }
+                }
+            ])
+            .toArray();
 
         if (!orders || orders.length === 0) {
             return sendResponse(200, true, "No orders found", []);
         }
 
-        // Format response (convert ObjectIds to strings)
+        // Convert ObjectIds and Dates to strings
         const formattedOrders = orders.map((order) => ({
             ...order,
-            _id: order._id.toString(),
-            userId: order.userId.toString(),
+            _id: order._id?.toString(),
+            userId: order.userId?.toString(),
             createdAt: order.createdAt?.toISOString(),
             updatedAt: order.updatedAt?.toISOString(),
+            client: order.client
+                ? {
+                    ...order.client,
+                    _id: order.client._id?.toString(),
+                }
+                : null,
         }));
 
         return sendResponse(200, true, "Orders fetched successfully", formattedOrders);

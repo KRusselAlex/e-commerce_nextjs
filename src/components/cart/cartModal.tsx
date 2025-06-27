@@ -86,6 +86,7 @@ import React, { useEffect, useState } from "react";
 import { ShoppingCart } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import CartItemCard from "./cartItem";
+import { toast } from "sonner";
 
 
 
@@ -115,8 +116,11 @@ const CartModal: React.FC = () => {
 
   const handleCheckout = () => {
     // This is where you would initiate the payment process
-    alert("Redirection vers le paiement...");
+    // alert("Redirection vers le paiement...");
     // You could redirect to /checkout or trigger Stripe/PayPal, etc.
+    toast.error(
+      "Nous avaons des problèmes avec le paiement, veuillez contacter le service client directment pour passer command"
+    );
   };
 
   return (

@@ -3,14 +3,7 @@
 import { useEffect, useState } from "react";
 import Dashboard from "@/components/admin/dashboard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import {
   BarChart,
   Bar,
@@ -26,17 +19,12 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import { getOrders, getProducts, getUsers } from "@/lib/api";
+import { getOrders, getProducts, getUsers, updateOrder } from "@/lib/api";
+import Link from "next/link";
+import OrderTable, { Order } from "@/components/admin/order/OrderTable";
+import { toast } from "sonner";
 
 // Define types
-type OrderStatus = "completed" | "pending" | "refunded";
-
-interface Order {
-  _id: string;
-  name: string;
-  totalAmount: number;
-  status: OrderStatus;
-}
 
 interface Product {
   name: string;
@@ -61,6 +49,19 @@ export default function AdminAnalyticsPage() {
     { name: "May", sales: 6000 },
     { name: "Jun", sales: 8000 },
   ]);
+
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
+    try {
+      await updateOrder(orderId, newStatus);
+      const updated = orders.map((o) =>
+        o._id === orderId ? { ...o, status: newStatus } : o
+      );
+      setOrders(updated);
+      toast.success("Statut mis à jour !");
+    } catch {
+      toast.error("Échec de la mise à jour");
+    }
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -125,7 +126,7 @@ export default function AdminAnalyticsPage() {
     <Dashboard>
       <div className="mx-auto max-w-[110em] overflow-x-auto">
         {/* Top KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+        <div className="grid  lg:grid-cols-3 gap-6 p-6">
           <Card>
             <CardHeader>
               <CardTitle>Total Revenue</CardTitle>
@@ -242,33 +243,21 @@ export default function AdminAnalyticsPage() {
 
           {/* Recent Orders */}
           <Card>
-            <CardHeader>
-              <CardTitle>Recent Orders</CardTitle>
+            <CardHeader className="flex justify-between">
+              <div className="flex justify-between w-full items-center">
+                <CardTitle>Recent Orders</CardTitle>
+                <Link href="/oniichan/order" passHref legacyBehavior>
+                  <a className="underline text-sm text-muted-foreground hover:text-primary">
+                    All orders
+                  </a>
+                </Link>
+              </div>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Order ID</TableHead>
-                    <TableHead>Customer</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {orders &&
-                    orders.slice(0, 5).map((order) => (
-                      <TableRow key={order._id}>
-                        <TableCell>{order._id}</TableCell>
-                        <TableCell>{order.name}</TableCell>
-                        <TableCell>
-                          {order.totalAmount?.toFixed(2)} CFA
-                        </TableCell>
-                        <TableCell>{order.status}</TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
+              <OrderTable
+                orders={orders.slice(0, 5)}
+                onStatusChange={handleStatusChange}
+              />
             </CardContent>
           </Card>
         </div>
