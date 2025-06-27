@@ -32,6 +32,8 @@ export default function ProductDetail({ product }: ProductCardProps) {
       ? JSON.parse(localStorage.getItem("userFeudjo") || "null")
       : null;
 
+  
+
   const handleAddToCart = async () => {
     if (!user?.id) {
       toast.error("Veuillez vous connecter d'abord.");
@@ -50,6 +52,7 @@ export default function ProductDetail({ product }: ProductCardProps) {
   };
 
   const handleBuyNow = async () => {
+    console.log("Acheter maintenant", product, quantity, user);
     if (!user?.id) {
       toast.error("Veuillez vous connecter d'abord.");
       router.push("/auth/login");

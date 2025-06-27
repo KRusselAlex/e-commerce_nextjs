@@ -5,10 +5,19 @@ import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { LogOut, ArrowLeft, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { getOrderByUserId, logout } from "@/lib/api";
+import clsx from "clsx";
 
 type User = {
   id: string;
@@ -39,6 +48,10 @@ type Order = {
 export default function OrdersPage() {
   const [user, setUser] = useState<User | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("date");
   const router = useRouter();
 
   useEffect(() => {
@@ -46,22 +59,20 @@ export default function OrdersPage() {
       typeof window !== "undefined"
         ? JSON.parse(localStorage.getItem("userFeudjo") || "null")
         : null;
+
     if (storedUser) {
-      try {
-        const parsedUser = storedUser;
-        setUser(parsedUser);
-        fetchOrders(parsedUser.id);
-      } catch (error) {
-        console.error("Error parsing user from localStorage", error);
-      }
+      setUser(storedUser);
+      fetchOrders(storedUser.id);
     }
   }, []);
 
   const fetchOrders = async (userId: string) => {
     try {
       const res = await getOrderByUserId(userId);
-      console.log("Fetched orders:", res.data);
-      setOrders(res.data.data);
+      const ordersData = res.data.data;
+      console.log("Fetched orders:", ordersData);
+      setOrders(ordersData);
+      setFilteredOrders(ordersData);
     } catch (error) {
       console.error("Failed to fetch orders", error);
     }
@@ -72,13 +83,52 @@ export default function OrdersPage() {
     router.push("/auth/login");
   };
 
+  useEffect(() => {
+    let filtered = orders.filter((order) => {
+      console.log("Filtering order:", order.referenceId);
+      const matchesSearch = order.referenceId
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+      const matchesStatus =
+        statusFilter === "all" || statusFilter === ""
+          ? true
+          : order.status === statusFilter;
+
+      return matchesSearch && matchesStatus;
+    });
+
+    // Sorting
+    if (sortBy === "date") {
+      filtered = filtered.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+    } else if (sortBy === "amount") {
+      filtered = filtered.sort((a, b) => b.totalAmount - a.totalAmount);
+    }
+
+    setFilteredOrders(filtered);
+  }, [search, statusFilter, sortBy, orders]);
+
+  const statusColor = (status: string) =>
+    clsx(
+      "text-xs font-semibold px-2 py-1 rounded-full capitalize",
+      {
+        pending: "bg-yellow-100 text-yellow-800",
+        processing: "bg-blue-100 text-blue-800",
+        shipped: "bg-orange-100 text-orange-800",
+        delivered: "bg-green-100 text-green-800",
+        cancelled: "bg-red-100 text-red-800",
+      }[status] || "bg-gray-100 text-gray-800"
+    );
+
   if (!user) return <p className="p-6">Chargement du profil...</p>;
 
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
-        {/* Left: Back & Title */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => router.back()}>
             <ArrowLeft className="w-5 h-5" />
@@ -86,8 +136,7 @@ export default function OrdersPage() {
           <h1 className="text-2xl font-bold">Mon Espace</h1>
         </div>
 
-        {/* Right: Profile Card */}
-        <div className="flex items-center gap-4 mt-4 md:mt-0">
+        <div className="flex items-center gap-4">
           <div className="flex items-center gap-3">
             <Avatar className="w-10 h-10">
               {user.avatar ? (
@@ -112,8 +161,8 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      {/* Go to Shop Button */}
-      <div className="mb-6">
+      {/* Go to Shop */}
+      <div>
         <Link href="/shop">
           <Button className="bg-primary text-white hover:bg-primary/90">
             <ShoppingCart className="w-4 h-4 mr-2" />
@@ -122,22 +171,59 @@ export default function OrdersPage() {
         </Link>
       </div>
 
-      {/* Orders Section */}
+      {/* Filters */}
+      <div className="flex flex-wrap gap-4 mb-4">
+        <Input
+          placeholder="Rechercher par référence..."
+          className="w-full md:w-64"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-full md:w-48">
+            <SelectValue placeholder="Filtrer par statut" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tous</SelectItem>
+            <SelectItem value="pending">En attente</SelectItem>
+            <SelectItem value="processing">En cours</SelectItem>
+            <SelectItem value="shipped">Expédiée</SelectItem>
+            <SelectItem value="delivered">Livrée</SelectItem>
+            <SelectItem value="cancelled">Annulée</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={sortBy} onValueChange={setSortBy}>
+          <SelectTrigger className="w-full md:w-48">
+            <SelectValue placeholder="Trier par" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="date">Date (récent)</SelectItem>
+            <SelectItem value="amount">Montant (élevé)</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Orders */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Mes Commandes</h2>
-        {orders.length === 0 ? (
-          <p>Aucune commande trouvée.</p>
+        {filteredOrders.length === 0 ? (
+          <p className="text-muted-foreground">Aucune commande trouvée.</p>
         ) : (
-          orders.map((order) => (
+          filteredOrders.map((order) => (
             <Card key={order._id} className="mb-4">
               <CardHeader>
-                <CardTitle>Commande {order.referenceId}</CardTitle>
+                <div className="flex justify-between items-center">
+                  <CardTitle className="text-lg font-semibold">
+                    Commande {order.referenceId}
+                  </CardTitle>
+                  <span className={statusColor(order.status)}>
+                    {order.status}
+                  </span>
+                </div>
                 <p className="text-sm text-muted-foreground">
                   Passée le {new Date(order.createdAt).toLocaleDateString()} |
-                  Statut: {order.status}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Paiement: {order.paymentStatus}
+                  Paiement:{" "}
+                  <span className="capitalize">{order.paymentStatus}</span>
                 </p>
               </CardHeader>
               <CardContent>
@@ -145,7 +231,7 @@ export default function OrdersPage() {
                   {order.items.map((item, idx) => (
                     <li key={idx} className="flex items-center gap-4">
                       <Image
-                        src={item.image}
+                        src={item.image || "/placeholder.png"}
                         alt={item.name}
                         width={50}
                         height={50}
@@ -160,7 +246,7 @@ export default function OrdersPage() {
                     </li>
                   ))}
                 </ul>
-                <p className="mt-4 font-bold text-right">
+                <p className="mt-4 font-bold text-right text-primary">
                   Total: {order.totalAmount} FCFA
                 </p>
               </CardContent>

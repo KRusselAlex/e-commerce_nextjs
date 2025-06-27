@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
                 quantity,
                 name: product.name,
                 price: product.price,
-                image: imageDoc?.url || "/default-image.png", // ✅ Use image.url from images collection
+                image: imageDoc?.url || "/placeholder.png", // ✅ Use image.url from images collection
             });
         }
 
