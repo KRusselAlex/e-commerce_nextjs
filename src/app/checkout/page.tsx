@@ -1,19 +1,10 @@
-"use client";
+import { Suspense } from "react";
+import CheckoutPageClient from "./CheckoutPageClient";
 
-import Navbar from "@/components/navbar/navbar";
-import Footer from "@/components/footer/footer";
-import "./style.css";
-import PaymentSection from "@/components/payment/payment";
-
-export default function Checkout() {
+export default function CheckoutPage() {
   return (
-    <div>
-      <div className="heroNav bg-primary text-white">
-        <Navbar />
-        <div className="h-12"></div>
-      </div>
-      <PaymentSection />
-      <Footer />
-    </div>
+    <Suspense fallback={<p className="p-10 text-center">Chargement...</p>}>
+      <CheckoutPageClient />
+    </Suspense>
   );
 }

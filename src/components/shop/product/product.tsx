@@ -6,9 +6,10 @@ import { ShoppingCart, CreditCard } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { createOrder } from "@/lib/api";
+// import { createOrder } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"; // Make sure you have this
+import Link from "next/link";
 
 interface ProductCardProps {
   product: {
@@ -32,8 +33,6 @@ export default function ProductDetail({ product }: ProductCardProps) {
       ? JSON.parse(localStorage.getItem("userFeudjo") || "null")
       : null;
 
-  
-
   const handleAddToCart = async () => {
     if (!user?.id) {
       toast.error("Veuillez vous connecter d'abord.");
@@ -51,34 +50,7 @@ export default function ProductDetail({ product }: ProductCardProps) {
     toast.success(`${quantity} ajouté(s) au panier`);
   };
 
-  const handleBuyNow = async () => {
-    console.log("Acheter maintenant", product, quantity, user);
-    if (!user?.id) {
-      toast.error("Veuillez vous connecter d'abord.");
-      router.push("/auth/login");
-      return;
-    }
 
-    if (quantity < 1) {
-      toast.error("La quantité doit être d'au moins 1.");
-      return;
-    }
-
-    try {
-      await createOrder({
-        userId: user._id,
-        productId: product._id,
-        name: product.name,
-        quantity,
-        price: product.price,
-        image: product.images?.[0] || "",
-      });
-      toast.success("Commande effectuée !");
-    } catch (error) {
-      console.error("Erreur commande:", error);
-      toast.error("Erreur lors de la commande");
-    }
-  };
 
   return (
     <div className="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -126,7 +98,7 @@ export default function ProductDetail({ product }: ProductCardProps) {
 
         <div className="flex flex-col gap-4">
           <span className="text-2xl font-semibold text-green-700">
-            {product.price}€
+            {product.price} CFA
           </span>
 
           {/* Quantity input */}
@@ -156,12 +128,18 @@ export default function ProductDetail({ product }: ProductCardProps) {
               <ShoppingCart size={20} /> Ajouter au panier
             </Button>
 
-            <Button
-              onClick={handleBuyNow}
-              className="flex-1 flex items-center gap-2 text-md text-white"
+            <Link
+              href={
+                user
+                  ? `/checkout?mode=buy-now&productId=${product._id}&qty=${quantity}`
+                  : "/auth/login"
+              }
+              className="flex-1"
             >
-              <CreditCard size={20} /> Acheter
-            </Button>
+              <Button className="flex-1 flex items-center gap-2 text-md text-white">
+                <CreditCard size={20} /> Acheter
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

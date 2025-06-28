@@ -205,7 +205,7 @@ export default function CreateProductForm() {
             </div>
             <Button
               type="button"
-              className="w-full mt-4"
+              className="w-full mt-4 text-white"
               onClick={submitProduct}
             >
               Enregistrer
@@ -271,7 +271,7 @@ export default function CreateProductForm() {
 
             <Button
               type="button"
-              className="w-full"
+              className="w-full text-white"
               onClick={uploadImages}
               disabled={images.length === 0 || uploading}
             >

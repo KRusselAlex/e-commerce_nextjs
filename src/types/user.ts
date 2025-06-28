@@ -12,6 +12,9 @@ export interface UserTypes {
     verificationToken?: string;
     verificationExpires?: Date;
     name: string;
+    phone?: string;
+    address?: string;
+    avatar?: string; // URL to the user's avatar imag
     createdAt?: Date;
     updatedAt?: Date;
 }

@@ -364,8 +364,8 @@
 
 import Navbar from "@/components/navbar/navbar";
 import Footer from "@/components/footer/footer";
-// import "./style.css";
-import PaymentSection from "@/components/payment/payment";
+// // import "./style.css";
+// import PaymentSection from "@/components/payment/payment";
 
 export default function Checkout() {
   return (
@@ -374,7 +374,7 @@ export default function Checkout() {
         <Navbar />
         <div className="h-12"></div>
       </div>
-      <PaymentSection />
+      {/* <PaymentSection /> */}
       <Footer />
     </div>
   );

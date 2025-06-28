@@ -55,3 +55,27 @@ export const cartSchema = z.object({
 });
 
 
+
+const shippingAddressSchema = z.object({
+    fullName: z.string().min(1),
+    phone: z.string().min(5),
+    addressLine: z.string().min(1),
+    city: z.string().min(1),
+    postalCode: z.string().min(1),
+    country: z.string().min(1),
+});
+
+export const buyNowSchema = z.object({
+    userId: z.string().refine((val) => objectIdRegex.test(val), {
+        message: "Invalid ObjectId format for userId",
+    }),
+    productId: z.string().refine((val) => objectIdRegex.test(val), {
+        message: "Invalid ObjectId format for productId",
+    }),
+    name: z.string(),
+    price: z.number(),
+    image: z.string(),
+    quantity: z.number().int().positive().optional().default(1),
+    shippingAddress: shippingAddressSchema, // ✅
+});
+

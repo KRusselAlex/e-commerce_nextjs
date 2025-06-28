@@ -114,6 +114,7 @@ export async function GET(request: NextRequest) {
                         status: 1,
                         items: 1,
                         totalAmount: 1,
+                        shippingAddress: 1,
                         // client fields
                         "client._id": 1,
                         "client.name": 1,

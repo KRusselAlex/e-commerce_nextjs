@@ -22,7 +22,7 @@ interface CartStore {
     getCartItem: (cartItemId: string) => Promise<CartItem | null>;
     addToCart: (productId: string, userId: string, quantity: number) => Promise<void>;
     updateCartItem: (cartItemId: string, quantity: number) => Promise<void>;
-    removeFromCart: (cartItemId: string) => Promise<void>;
+    removeFromCart: (userId: string, cartItemId: string) => Promise<void>;
     clearCart: (userId: string) => Promise<void>;
 }
 
@@ -81,12 +81,10 @@ export const useCartStore = create<CartStore>((set) => ({
         }
     },
 
-    removeFromCart: async (cartItemId) => {
+    removeFromCart: async (userId, cartItemId) => {
         try {
-            await apiRemoveCartItem(cartItemId);
-            set((state) => ({
-                cartItems: state.cartItems.filter((item) => item.productId !== cartItemId),
-            }));
+            await apiRemoveCartItem(userId, cartItemId);
+
         } catch (error) {
             console.error("❌ Failed to remove cart item:", error);
         }

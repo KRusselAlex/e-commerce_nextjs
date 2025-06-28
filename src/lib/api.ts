@@ -38,7 +38,15 @@ export const addToCart = (productId: string, userId: string, quantity: number) =
     axiosInstance.post("/carts", { productId, userId, quantity });
 export const updateCartItem = (cartItemId: string, quantity: number) =>
     axiosInstance.put(`/carts/${cartItemId}`, { quantity });
-export const removeCartItem = (cartItemId: string) => axiosInstance.delete(`/carts/${cartItemId}`);
+export const removeCartItem = (userId: string, cartItemId: string) =>
+    axiosInstance.delete("/carts", {
+        data: {
+            userId: userId,
+            productId: cartItemId,
+        },
+    });
+
+
 export const clearCart = () => axiosInstance.delete("/carts/clear");
 // In your api client
 export const clearCartByUserId = (userId: string) =>
@@ -70,6 +78,7 @@ export const register = (data: UserRegisterInput) => axiosInstance.post("/auth/r
 export const resetPassword = (email: string) => axiosInstance.post("/auth/reset-password", { email });
 export const resetPasswordConfirm = (token: string, password: string) => axiosInstance.post("/auth/password-reset", { token, password });
 export const logout = () => {
+
     localStorage.removeItem("userFeudjoToken");
 
     axiosInstance.post("/auth/logout")

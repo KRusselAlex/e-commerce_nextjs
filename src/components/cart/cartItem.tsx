@@ -22,23 +22,25 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
   image,
   quantity,
 }) => {
-  const { removeFromCart } = useCartStore();
+  const { removeFromCart, fetchCart } = useCartStore();
 
-  const handleRemoveCart = async () =>{
+  const user =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("userFeudjo") || "null")
+      : null;
 
+  const handleRemoveCart = async () => {
     try {
-
-      await removeFromCart(id);
-     toast.success("cart removed")
-      
-    }catch (error: unknown) {
-          const message =
-            (error as ApiError)?.response?.data?.message ||
-            "Removed failed. Try again.";
-          toast.error(message);
-        }
-
-  }
+      await removeFromCart(user.id, id);
+      await fetchCart(user.id);
+      toast.success("cart removed");
+    } catch (error: unknown) {
+      const message =
+        (error as ApiError)?.response?.data?.message ||
+        "Removed failed. Try again.";
+      toast.error(message);
+    }
+  };
 
   return (
     <div className="flex items-center justify-between bg-white shadow rounded-lg p-3">

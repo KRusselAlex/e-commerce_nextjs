@@ -11,21 +11,32 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { getOrders, updateOrder } from "@/lib/api";
 
-// Types
+// Helpers
+import { saveAs } from "file-saver";
+
 type OrderItem = {
   name: string;
   quantity: number;
   price: number;
-  image?: string;
 };
 
 type OrderClient = {
   _id: string;
   name: string;
   email: string;
+};
+
+type ShippingAddress = {
+  fullName: string;
+  phone: string;
+  addressLine: string;
+  city: string;
+  postalCode: string;
+  country: string;
 };
 
 type Order = {
@@ -38,9 +49,9 @@ type Order = {
   createdAt: string;
   items: OrderItem[];
   client?: OrderClient;
+  shippingAddress?: ShippingAddress;
 };
 
-// UI helpers
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-yellow-200 text-yellow-800",
   processing: "bg-blue-200 text-blue-800",
@@ -60,11 +71,11 @@ const PAYMENTS = ["paid", "unpaid"];
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [filtered, setFiltered] = useState<Order[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [paymentFilter, setPaymentFilter] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const perPage = 10;
-  const totalPages = Math.ceil(filtered.length / perPage);
 
   useEffect(() => {
     fetchOrders();
@@ -73,7 +84,6 @@ export default function AdminOrdersPage() {
   const fetchOrders = async () => {
     try {
       const res = await getOrders();
-      console.log("Fetched orders:", res.data.data);
       setOrders(res.data.data);
       setFiltered(res.data.data);
     } catch (err) {
@@ -96,56 +106,123 @@ export default function AdminOrdersPage() {
     }
   };
 
-  const applyFilters = (ordersList = orders) => {
-    let temp = [...ordersList];
-    if (statusFilter) temp = temp.filter((o) => o.status === statusFilter);
-    if (paymentFilter)
+  const applyFilters = (list = orders) => {
+    let temp = [...list];
+
+    if (statusFilter) {
+      temp = temp.filter((o) => o.status === statusFilter);
+    }
+
+    if (paymentFilter) {
       temp = temp.filter((o) => o.paymentStatus === paymentFilter);
+    }
+
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      temp = temp.filter(
+        (o) =>
+          o.client?.email?.toLowerCase().includes(q) ||
+          o.referenceId?.toLowerCase().includes(q)
+      );
+    }
+
     setFiltered(temp);
     setPage(1);
   };
 
   useEffect(() => {
     applyFilters();
-  }, [statusFilter, paymentFilter]);
+  }, []);
 
   const paginated = filtered.slice((page - 1) * perPage, page * perPage);
-  console.log("Paginated orders:", paginated);
+  const totalPages = Math.ceil(filtered.length / perPage);
+
+  const handleExportCSV = () => {
+    const headers = [
+      "Reference ID",
+      "Client Name",
+      "Email",
+      "Total Amount",
+      "Status",
+      "Payment",
+      "Date",
+      "Shipping Address",
+    ];
+
+    const rows = filtered.map((order) => [
+      order.referenceId ?? order._id,
+      order.client?.name ?? "",
+      order.client?.email ?? "",
+      order.totalAmount,
+      order.status,
+      order.paymentStatus ?? "",
+      new Date(order.createdAt).toLocaleString(),
+      [
+        order.shippingAddress?.fullName,
+        order.shippingAddress?.phone,
+        order.shippingAddress?.addressLine,
+        order.shippingAddress?.city,
+        order.shippingAddress?.postalCode,
+        order.shippingAddress?.country,
+      ]
+        .filter(Boolean)
+        .join(", "),
+    ]);
+
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map((v) => `"${v}"`).join(","))
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    saveAs(blob, "orders_export.csv");
+  };
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Commandes Admin</h1>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <h1 className="text-2xl font-bold">Commandes Admin</h1>
 
-      {/* Filters */}
-      <div className="flex gap-4 mb-6">
-        <Select onValueChange={(v) => setStatusFilter(v)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filtrer par statut" />
-          </SelectTrigger>
-          <SelectContent>
-            {STATUSES.map((s) => (
-              <SelectItem key={s} value={s}>
-                {s}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex gap-4 flex-wrap">
+          <Input
+            type="text"
+            placeholder="Recherche par email ou ref..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-[220px]"
+          />
 
-        <Select onValueChange={(v) => setPaymentFilter(v)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filtrer par paiement" />
-          </SelectTrigger>
-          <SelectContent>
-            {PAYMENTS.map((p) => (
-              <SelectItem key={p} value={p}>
-                {p}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <Select onValueChange={(v) => setStatusFilter(v)}>
+            <SelectTrigger className="w-[150px]">
+              <SelectValue placeholder="Statut" />
+            </SelectTrigger>
+            <SelectContent>
+              {STATUSES.map((s) => (
+                <SelectItem key={s} value={s}>
+                  {s}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select onValueChange={(v) => setPaymentFilter(v)}>
+            <SelectTrigger className="w-[150px]">
+              <SelectValue placeholder="Paiement" />
+            </SelectTrigger>
+            <SelectContent>
+              {PAYMENTS.map((p) => (
+                <SelectItem key={p} value={p}>
+                  {p}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Button onClick={handleExportCSV} variant="outline">
+            Exporter CSV
+          </Button>
+        </div>
       </div>
 
-      {/* Orders */}
       {paginated.length === 0 ? (
         <p>Aucune commande.</p>
       ) : (
@@ -178,7 +255,8 @@ export default function AdminOrdersPage() {
                 )}
               </div>
             </CardHeader>
-            <CardContent className="space-y-2">
+
+            <CardContent className="space-y-3">
               <ul className="text-sm">
                 {order.items.map((item, i) => (
                   <li key={i}>
@@ -189,10 +267,36 @@ export default function AdminOrdersPage() {
                 ))}
               </ul>
 
-              <p className="text-sm mt-2 text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 Total articles:{" "}
                 {order.items.reduce((sum, item) => sum + item.quantity, 0)}
               </p>
+
+              {/* Shipping address */}
+              <div className="text-sm text-muted-foreground space-y-1 mt-4">
+                <p className="font-semibold text-black">
+                  Adresse de livraison :
+                </p>
+                <p>
+                  <strong>Nom :</strong>{" "}
+                  {order.shippingAddress?.fullName ?? "N/A"}
+                </p>
+                <p>
+                  <strong>Téléphone :</strong>{" "}
+                  {order.shippingAddress?.phone ?? "N/A"}
+                </p>
+                <p>
+                  <strong>Adresse :</strong>{" "}
+                  {[
+                    order.shippingAddress?.addressLine,
+                    order.shippingAddress?.city,
+                    order.shippingAddress?.postalCode,
+                    order.shippingAddress?.country,
+                  ]
+                    .filter(Boolean)
+                    .join(", ") || "Non spécifiée"}
+                </p>
+              </div>
 
               <div className="flex items-center gap-2 mt-4">
                 <label className="text-sm font-medium">Changer statut :</label>
@@ -219,7 +323,6 @@ export default function AdminOrdersPage() {
         ))
       )}
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center mt-6 gap-4">
           <Button

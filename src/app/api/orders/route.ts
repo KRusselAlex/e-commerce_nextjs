@@ -17,6 +17,15 @@ interface OrderItemRoute {
 }
   
 
+const shippingAddressSchema = z.object({
+    fullName: z.string().min(1),
+    phone: z.string().min(5),
+    addressLine: z.string().min(1),
+    city: z.string().min(1),
+    postalCode: z.string().min(1),
+    country: z.string().min(1),
+});
+
 const buyNowSchema = z.object({
     userId: z.string().refine((val) => ObjectId.isValid(val), "Invalid userId"),
     productId: z.string().refine((val) => ObjectId.isValid(val), "Invalid productId"),
@@ -24,22 +33,27 @@ const buyNowSchema = z.object({
     price: z.number(),
     image: z.string(),
     quantity: z.number().int().positive().optional().default(1),
+    shippingAddress: shippingAddressSchema, // ✅
 });
 
 const cartSchema = z.object({
     userId: z.string().refine((val) => ObjectId.isValid(val), "Invalid userId"),
+    shippingAddress: shippingAddressSchema, // ✅
 });
+
 
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
 
-        // Validate if it's a "Buy Now" request
+
         const buyNowResult = buyNowSchema.safeParse(body);
         const cartResult = cartSchema.safeParse(body);
 
         let orderItems = [];
         let userId: ObjectId;
+        let shippingAddress;
+
 
         const { db } = await connectToDatabase();
 
@@ -47,18 +61,19 @@ export async function POST(request: NextRequest) {
             const data = buyNowResult.data;
 
             userId = new ObjectId(data.userId);
-            orderItems = [
-                {
-                    productId: data.productId,
-                    name: data.name,
-                    price: data.price,
-                    quantity: data.quantity || 1,
-                    image: data.image,
-                },
-            ];
+            shippingAddress = data.shippingAddress;
+
+            orderItems = [{
+                productId: data.productId,
+                name: data.name,
+                price: data.price,
+                quantity: data.quantity || 1,
+                image: data.image,
+            }];
         } else if (cartResult.success) {
             const data = cartResult.data;
             userId = new ObjectId(data.userId);
+            shippingAddress = data.shippingAddress;
 
             const cart = await db.collection("carts").findOne({ userId });
 
@@ -73,7 +88,8 @@ export async function POST(request: NextRequest) {
                 ...item,
                 productId: item.productId.toString(),
             }));
-        } else {
+        }
+        else {
             const formattedErrors = formatZodErrors([
                 ...(buyNowResult.error?.errors || []),
                 ...(cartResult.error?.errors || []),
@@ -96,11 +112,13 @@ export async function POST(request: NextRequest) {
             referenceId,
             items: orderItems,
             totalAmount,
+            shippingAddress, // ✅ added here
             status: "pending",
-            paymentStatus: "pending", 
+            paymentStatus: "pending",
             createdAt: new Date(),
             updatedAt: new Date(),
         };
+
 
         await db.collection("orders").insertOne(orderData);
 
@@ -202,6 +220,7 @@ export async function GET() {
                         status: 1,
                         items: 1,
                         totalAmount: 1,
+                        shippingAddress: 1, 
                         // Client details
                         "client._id": 1,
                         "client.name": 1,

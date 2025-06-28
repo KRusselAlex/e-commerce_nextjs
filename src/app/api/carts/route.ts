@@ -155,3 +155,61 @@ export async function GET() {
     }
 }
 
+
+export async function DELETE(request: NextRequest) {
+    try {
+        const body = await request.json();
+        const { userId, productId } = body;
+
+        if (!userId || !productId) {
+            return sendResponse(400, false, "Missing userId or productId", null, {
+                code: 400,
+                details: "Both userId and productId are required",
+            });
+        }
+
+        const { db } = await connectToDatabase();
+
+        const userObjectId = new ObjectId(userId);
+        const productObjectId = new ObjectId(productId);
+
+        const cart = await db.collection("carts").findOne({ userId: userObjectId });
+
+        if (!cart) {
+            return sendResponse(404, false, "Cart not found", null, {
+                code: 404,
+                details: "No cart found for this user.",
+            });
+        }
+
+        const updatedItems = cart.items.filter(
+            (item: CartItem) => item.productId.toString() !== productObjectId.toString()
+        );
+
+        await db.collection("carts").updateOne(
+            { _id: cart._id },
+            {
+                $set: {
+                    items: updatedItems,
+                    updatedAt: new Date(),
+                },
+            }
+        );
+
+        return sendResponse(200, true, "Item removed from cart", {
+            cartId: cart._id,
+            items: updatedItems,
+        });
+    } catch (error: unknown) {
+        let errorMessage = "Unknown error";
+        if (error instanceof Error) errorMessage = error.message;
+        else if (typeof error === "string") errorMessage = error;
+
+        console.error("Delete cart item error:", error);
+
+        return sendResponse(500, false, "Failed to remove item", null, {
+            code: 500,
+            details: errorMessage,
+        });
+    }
+}

@@ -4,7 +4,6 @@ import { NextRequest } from 'next/server';
 import { ObjectId } from 'mongodb';
 import { formatZodErrors } from '@/lib/formatZodErrors';
 import { productSchema } from '@/lib/validationSchemas';
-import { ProductTypes } from '@/types/product';
 import cloudinary from '@/lib/cloudinaryConfig';
 
 export async function GET(
@@ -156,66 +155,6 @@ export async function DELETE(request: NextRequest) {
 }
 
 
-export async function POST(request: Request) {
-    try {
-        const { db } = await connectToDatabase();
-        const requestBody = await request.json();
-
-        const validationResult = productSchema.safeParse(requestBody);
-        const categoryId = validationResult.data?.category
-        const objectId = new ObjectId(categoryId)
-
-        // If validation fails, return an error response
-        if (!validationResult.success) {
-            const formattedErrors = formatZodErrors(validationResult.error.errors);
-            return sendResponse(400, false, 'Validation failed', null, {
-                code: 400,
-                details: formattedErrors, 
-            });
-        }
-
-        // Check if product exists
-        const categoryExists = await db.collection('categories').findOne({ _id: objectId });
-
-
-        if (!categoryExists) {
-            return sendResponse(404, false, 'category not found', null, {
-                code: 404,
-                details: `No category found with ID: ${objectId}`,
-            });
-        }
-
-
-        const newProduct: ProductTypes = {
-            ...validationResult.data,
-            category: objectId,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        };
-
-
-        const result = await db.collection('products').insertOne(newProduct);
-
-        const insertedProduct = await db
-            .collection('products')
-            .findOne({ _id: result.insertedId });
-
-        if (!insertedProduct) {
-            return sendResponse(500, false, 'Failed to fetch inserted product', null, {
-                code: 500,
-                details: 'Failed to fetch inserted product',
-            });
-        }
-
-        return sendResponse(201, true, 'Product created successfully', insertedProduct);
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to create product';
-        return sendResponse(500, false, errorMessage, null, {
-            code: 500,
-            details: errorMessage,
-        });
-    }
-}
 
 
 
