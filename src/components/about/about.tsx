@@ -97,14 +97,14 @@ export default function AboutUs() {
                 (src, i) => (
                   <CarouselItem
                     key={i}
-                    className="flex h-40 justify-center basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/4 px-0 md:px-1"
+                    className="flex  h-40 justify-center basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/4 px-0 md:px-1"
                   >
                     <Image
                       src={src}
                       alt="Logo fabricant"
                       width={200}
                       height={100}
-                      className="rounded-lg shadow-lg object-contain"
+                      className="rounded-lg shadow-lg object-cover "
                     />
                   </CarouselItem>
                 )
