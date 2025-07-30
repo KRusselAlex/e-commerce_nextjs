@@ -57,7 +57,7 @@ export default function Navbar() {
   return (
     <header>
       <nav
-        className={`fixed z-40 w-full py-4 border-b border-gray-200 px-4 md:px-16 ${
+        className={`fixed z-40 w-full py-4 border-b border-gray-200 px-3  ${
           isScrolled
             ? "navbarScroll shadow-md bg-white"
             : "bg-transparent text-white"

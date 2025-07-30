@@ -72,6 +72,7 @@ export async function POST(request: NextRequest) {
 
         return sendResponse(201, true, 'Images uploaded successfully', uploadedImages);
     } catch (error) {
+        console.log("j suis icic big")
         const errorMessage = error instanceof Error ? error.message : 'Failed to upload image';
         return sendResponse(500, false, errorMessage);
     }

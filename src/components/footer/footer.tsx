@@ -34,18 +34,18 @@ export default function Footer() {
 
   return (
     <footer className="bg-[#151515] text-white">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20 pt-10 pb-5 md:px-16">
-        <div className="px-4 sm:grid md:grid-cols-2 lg:grid-cols-4 sm:grid-cols-2 mx-auto">
-          <div className="p-4">
+      <div className="mx-auto max-w-7xl  py-16 lg:py-20 pt-10 pb-5 ">
+        <div className="px-2 sm:grid md:grid-cols-2 lg:grid-cols-4 sm:grid-cols-2 mx-auto gap-4">
+          <div className="px-2 md:px-0 py-3">
             <Logo />
           </div>
-          <div className="p-3 md:p-4">
+          <div className="py-3">
             <SelectList header="Service Client" items={customerServiceItems} />
           </div>
-          <div className="p-3 md:p-4">
+          <div className="py-3">
             <SelectList header="Support" items={supportItems} />
           </div>
-          <div className="p-3 md:p-4">
+          <div className="py-3">
             <SelectList header="Liens rapides" items={quickLinksItems} />
           </div>
         </div>

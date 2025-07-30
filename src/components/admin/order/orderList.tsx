@@ -257,46 +257,50 @@ export default function AdminOrdersPage() {
             </CardHeader>
 
             <CardContent className="space-y-3">
-              <ul className="text-sm">
-                {order.items.map((item, i) => (
-                  <li key={i}>
-                    {item.name} × {item.quantity} —{" "}
-                    {item.price.toLocaleString()} FCFA (Total:{" "}
-                    {(item.quantity * item.price).toLocaleString()} FCFA)
-                  </li>
-                ))}
-              </ul>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <ul className="text-sm">
+                    {order.items.map((item, i) => (
+                      <li key={i}>
+                        {item.name} × {item.quantity} —{" "}
+                        {item.price.toLocaleString()} FCFA (Total:{" "}
+                        {(item.quantity * item.price).toLocaleString()} FCFA)
+                      </li>
+                    ))}
+                  </ul>
 
-              <p className="text-sm text-muted-foreground">
-                Total articles:{" "}
-                {order.items.reduce((sum, item) => sum + item.quantity, 0)}
-              </p>
+                  <p className="text-sm text-muted-foreground">
+                    Total articles:{" "}
+                    {order.items.reduce((sum, item) => sum + item.quantity, 0)}
+                  </p>
+                </div>
+                <div className="text-sm text-muted-foreground space-y-1 mt-4">
+                  <p className="font-semibold text-black">
+                    Adresse de livraison :
+                  </p>
+                  <p>
+                    <strong>Nom :</strong>{" "}
+                    {order.shippingAddress?.fullName ?? "N/A"}
+                  </p>
+                  <p>
+                    <strong>Téléphone :</strong>{" "}
+                    {order.shippingAddress?.phone ?? "N/A"}
+                  </p>
+                  <p>
+                    <strong>Adresse :</strong>{" "}
+                    {[
+                      order.shippingAddress?.addressLine,
+                      order.shippingAddress?.city,
+                      order.shippingAddress?.postalCode,
+                      order.shippingAddress?.country,
+                    ]
+                      .filter(Boolean)
+                      .join(", ") || "Non spécifiée"}
+                  </p>
+                </div>
+              </div>
 
               {/* Shipping address */}
-              <div className="text-sm text-muted-foreground space-y-1 mt-4">
-                <p className="font-semibold text-black">
-                  Adresse de livraison :
-                </p>
-                <p>
-                  <strong>Nom :</strong>{" "}
-                  {order.shippingAddress?.fullName ?? "N/A"}
-                </p>
-                <p>
-                  <strong>Téléphone :</strong>{" "}
-                  {order.shippingAddress?.phone ?? "N/A"}
-                </p>
-                <p>
-                  <strong>Adresse :</strong>{" "}
-                  {[
-                    order.shippingAddress?.addressLine,
-                    order.shippingAddress?.city,
-                    order.shippingAddress?.postalCode,
-                    order.shippingAddress?.country,
-                  ]
-                    .filter(Boolean)
-                    .join(", ") || "Non spécifiée"}
-                </p>
-              </div>
 
               <div className="flex items-center gap-2 mt-4">
                 <label className="text-sm font-medium">Changer statut :</label>
