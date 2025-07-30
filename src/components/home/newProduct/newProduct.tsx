@@ -4,7 +4,7 @@ import CustomButton from "@/components/button/button";
 import CarouselSection from "@/components/home/newProduct/carouselProduct/carouselProduct";
 import { ChevronRight } from "lucide-react";
 
-const images = ["/meta.jpeg", "/l.jpeg", "/kj.jpeg"];
+const images = ["/meta.jpeg", "/l.jpeg", "/kl.jpg"];
 const content = {
   title: "Catégories d’Équipements",
   description:
