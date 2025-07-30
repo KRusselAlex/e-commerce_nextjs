@@ -100,19 +100,16 @@ export default function FAQsSection() {
   const [selectedCategory, setSelectedCategory] = useState<Category>("Général");
 
   return (
-    <div>
-      <div className="bg-primary text-white">
-        <div className="flex flex-col h-full w-full justify-center px-2 py-16 items-center">
-          <h1 className="text-xl md:text-4xl font-bold text-center mb-4">
+    <div className="min-h-screen flex flex-col items-col justify-center">
+      <div className="">
+        <div className="flex flex-col h-full w-full justify-center px-2  items-center">
+          <h1 className="text-xl md:text-4xl font-bold text-center my-4">
             FAQs
           </h1>
-          <p className="text-center">
-            Trouvez ci-dessous les réponses aux questions fréquentes.
-          </p>
         </div>
       </div>
-      <div className="bg-fourthly w-full">
-        <div className="max-w-4xl mx-auto p-6 py-16">
+      <div className="bg-white  w-full">
+        <div className="max-w-4xl mx-auto p-6   h-full">
           <div className="flex gap-4 justify-center mb-6">
             {categories.map((category) => (
               <Button

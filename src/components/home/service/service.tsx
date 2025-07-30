@@ -40,8 +40,8 @@ const services = [
 
 export default function ServicesSection() {
   return (
-    <section className="bg-primary ">
-      <div className="flex flex-col lg:flex-row gap-16 mx-auto text-center max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+    <section className="bg-primary min-h-screen h-full flex items-center justify-center">
+      <div className="flex flex-col lg:flex-row gap-16 mx-auto text-center h-full justify-center max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="lg:w-1/3 text-white text-center lg:text-left">
           <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-6">
             Store : Votre partenaire en matériel et fournitures de laboratoire

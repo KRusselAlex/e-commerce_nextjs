@@ -25,7 +25,7 @@ export default function CustomButton({
       )}
       type={type}
     >
-      <span className="relative z-10 ">{children}</span>
+      <span className="relative z-10 mt-1">{children}</span>
 
       <span className="ml-2 relative z-10 transition-transform duration-300 group-hover:translate-x-3">
         {icon}

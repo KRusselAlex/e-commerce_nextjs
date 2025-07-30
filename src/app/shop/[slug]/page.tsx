@@ -4,7 +4,6 @@ import Navbar from "@/components/navbar/navbar";
 import Footer from "@/components/footer/footer";
 import "./style.css";
 import ProductView from "@/components/shop/product/product";
-import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useRouter, useParams } from "next/navigation";
 import { useProductStore } from "@/store/productStore";
 import { useEffect, useState } from "react";
@@ -56,9 +55,6 @@ export default function Product() {
         <Navbar />
         <div className="h-12"></div>
         <div className="flex flex-col h-full w-full justify-center p-2 items-center">
-          <div className="cursor-pointer text-xl" onClick={() => router.back()}>
-            <AiOutlineArrowLeft />
-          </div>
           <h1 className="text-xl md:text-4xl font-bold text-center mb-4">
             Product
           </h1>

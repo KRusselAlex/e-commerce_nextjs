@@ -14,7 +14,7 @@ const content = {
 export default function HeroSection() {
   return (
     <main className="flex justify-center">
-      <div className="flex flex-col gap-12 w-full md:w-2/3 justify-center items-center min-h-screen">
+      <div className="flex flex-col gap-12 w-full max-w-7xl mx-auto justify-center items-center min-h-screen">
         <h1 className="text-3xl md:text-4xl lg:text-5xl px-2 text-white font-bold text-center">
           {content.title}
         </h1>
