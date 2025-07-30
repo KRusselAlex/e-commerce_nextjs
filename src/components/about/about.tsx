@@ -14,7 +14,7 @@ import Link from "next/link";
 export default function AboutUs() {
   return (
     <section className="bg-fourthly py-10">
-      <div className="container mx-auto px-6 text-center">
+      <div className=" max-w-7xl w-full  mx-auto px-6 text-center">
         {/* Section Statistiques */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {[
