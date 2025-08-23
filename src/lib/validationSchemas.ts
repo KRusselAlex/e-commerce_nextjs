@@ -11,7 +11,30 @@ export const productSchema = z.object({
 });
 
 export const userSchema = z.object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
+    name: z.string()
+        .min(2, "Name must be at least 2 characters")
+        .refine((val) => !/\s/.test(val), {
+            message: "Name must not contain spaces",
+        }),
+    email: z.string().email("Invalid email address"),
+    role: z.enum(["admin", "user"], {
+        errorMap: () => ({ message: "Role must be either 'admin' or 'user'" }),
+    }),
+    password: z
+        .string(),
+    // .min(8, "Password must be at least 8 characters")
+    // .regex(/[A-Z]/, "Must contain at least one uppercase letter")
+    // .regex(/[0-9]/, "Must contain at least one number")
+    // .regex(/[!@#$%^&*]/, "Must contain at least one special character"),
+
+});
+
+export const registerSchema = z.object({
+    name: z.string()
+        .min(2, "Name must be at least 2 characters")
+        .refine((val) => !/\s/.test(val), {
+            message: "Name must not contain spaces",
+        }),
     email: z.string().email("Invalid email address"),
     password: z
         .string()
@@ -19,16 +42,16 @@ export const userSchema = z.object({
         .regex(/[A-Z]/, "Must contain at least one uppercase letter")
         .regex(/[0-9]/, "Must contain at least one number")
         .regex(/[!@#$%^&*]/, "Must contain at least one special character"),
-
 });
 
 
 
 
-export type RegisterInput = z.infer<typeof userSchema>;
+
+export type RegisterInput = z.infer<typeof registerSchema>;
 
 export const loginSchema = z.object({
-    email: z.string().email({ message: 'Invalid email address' }),
+    email: z.string().min(1, { message: 'email or username required' }),
     password: z.string().min(1, { message: 'Password is required' }),
 });
 

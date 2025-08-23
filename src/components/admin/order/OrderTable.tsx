@@ -56,11 +56,11 @@ export default function OrderTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Commande</TableHead>
-          <TableHead>Client</TableHead>
+          <TableHead>Order</TableHead>
+          <TableHead>Customer</TableHead>
           <TableHead>Email</TableHead>
-          <TableHead>Montant</TableHead>
-          <TableHead>Statut</TableHead>
+          <TableHead>Amount</TableHead>
+          <TableHead>Status</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

@@ -5,7 +5,7 @@ import Footer from "@/components/footer/footer";
 import "./style.css";
 import AboutUs from "@/components/about/about";
 
-export default function Contact() {
+export default function About() {
   return (
     <div>
       <div className="heroNav bg-primary text-white">
@@ -13,11 +13,11 @@ export default function Contact() {
         <div className="h-12"></div>
         <div className="flex flex-col h-full w-full justify-center p-2 items-center">
           <h1 className="text-xl md:text-4xl font-bold text-center mb-4">
-            À propos de nous
+            About Us
           </h1>
           <p className="text-center mb-8">
-            Découvrez l&apos;histoire derrière Store : où l&apos;innovation
-            rencontre l&apos;équipement de laboratoire
+            Discover the story behind Store: where innovation meets laboratory
+            equipment
           </p>
         </div>
       </div>

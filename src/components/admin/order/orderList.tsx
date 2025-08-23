@@ -87,8 +87,8 @@ export default function AdminOrdersPage() {
       setOrders(res.data.data);
       setFiltered(res.data.data);
     } catch (err) {
-      console.error("Erreur de chargement des commandes", err);
-      toast.error("Erreur de chargement des commandes");
+      console.error("Failed to load orders", err);
+      toast.error("Failed to load orders");
     }
   };
 
@@ -100,9 +100,9 @@ export default function AdminOrdersPage() {
       );
       setOrders(updated);
       applyFilters(updated);
-      toast.success("Statut mis à jour !");
+      toast.success("Status updated!");
     } catch {
-      toast.error("Échec de la mise à jour");
+      toast.error("Failed to update status");
     }
   };
 
@@ -180,12 +180,12 @@ export default function AdminOrdersPage() {
   return (
     <div className="p-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold">Commandes Admin</h1>
+        <h1 className="text-2xl font-bold">Admin Orders</h1>
 
         <div className="flex gap-4 flex-wrap">
           <Input
             type="text"
-            placeholder="Recherche par email ou ref..."
+            placeholder="Search by email or ref..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-[220px]"
@@ -193,7 +193,7 @@ export default function AdminOrdersPage() {
 
           <Select onValueChange={(v) => setStatusFilter(v)}>
             <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Statut" />
+              <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
               {STATUSES.map((s) => (
@@ -206,7 +206,7 @@ export default function AdminOrdersPage() {
 
           <Select onValueChange={(v) => setPaymentFilter(v)}>
             <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Paiement" />
+              <SelectValue placeholder="Payment" />
             </SelectTrigger>
             <SelectContent>
               {PAYMENTS.map((p) => (
@@ -218,30 +218,30 @@ export default function AdminOrdersPage() {
           </Select>
 
           <Button onClick={handleExportCSV} variant="outline">
-            Exporter CSV
+            Export CSV
           </Button>
         </div>
       </div>
 
       {paginated.length === 0 ? (
-        <p>Aucune commande.</p>
+        <p>No orders.</p>
       ) : (
         paginated.map((order) => (
           <Card key={order._id} className="mb-4">
             <CardHeader className="flex flex-col md:flex-row justify-between gap-2">
               <div>
                 <CardTitle>
-                  Commande:{" "}
+                  Order:{" "}
                   <span className="text-primary">
                     {order.referenceId ?? order._id}
                   </span>
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  Client: <strong>{order.client?.name ?? "Inconnu"}</strong> (
-                  {order.client?.email ?? "Email inconnu"})
+                  Client: <strong>{order.client?.name ?? "Unknown"}</strong> (
+                  {order.client?.email ?? "Unknown email"})
                 </p>
                 <p className="text-sm">
-                  Le {new Date(order.createdAt).toLocaleString()}
+                  On {new Date(order.createdAt).toLocaleString()}
                 </p>
               </div>
               <div className="flex flex-col md:items-end gap-2">

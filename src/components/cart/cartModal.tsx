@@ -23,10 +23,10 @@ const CartModal: React.FC = () => {
         if (user && user.id) {
           await fetchCart(user.id);
         } else {
-          console.warn("Aucun utilisateur trouvé dans le localStorage.");
+          console.warn("No user found in localStorage.");
         }
       } catch (error) {
-        console.error("Erreur lors du chargement du panier:", error);
+        console.error("Error loading cart:", error);
       }
     };
 
@@ -35,13 +35,13 @@ const CartModal: React.FC = () => {
 
   const handleCheckout = () => {
     if (!user || !user.id) {
-      toast.error("Veuillez vous connecter d'abord.");
+      toast.error("Please log in first.");
       router.push("/auth/login");
       return;
     }
 
     if (cartItems.length === 0) {
-      toast.error("Votre panier est vide.");
+      toast.error("Your cart is empty.");
       return;
     }
 
@@ -71,11 +71,9 @@ const CartModal: React.FC = () => {
               onClick={() => setIsOpen(false)}
               className="mb-4 text-gray-600"
             >
-              ✖ Fermer
+              ✖ Close
             </button>
-            <h2 className="text-xl font-semibold mb-4 text-black">
-              Votre Panier
-            </h2>
+            <h2 className="text-xl font-semibold mb-4 text-black">Your Cart</h2>
             <div className="grid grid-cols-1 gap-4">
               {cartItems.length > 0 ? (
                 cartItems.map((item) => (
@@ -89,7 +87,7 @@ const CartModal: React.FC = () => {
                   />
                 ))
               ) : (
-                <p className="text-center text-black">Votre panier est vide.</p>
+                <p className="text-center text-black">Your cart is empty.</p>
               )}
             </div>
           </div>
@@ -99,7 +97,7 @@ const CartModal: React.FC = () => {
               onClick={handleCheckout}
               className="mt-6 w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors"
             >
-              🛒 Passer au paiement
+              🛒 Proceed to Checkout
             </button>
           )}
         </div>

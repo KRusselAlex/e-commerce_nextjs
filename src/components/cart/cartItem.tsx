@@ -33,11 +33,11 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
     try {
       await removeFromCart(user.id, id);
       await fetchCart(user.id);
-      toast.success("cart removed");
+      toast.success("Item removed from cart");
     } catch (error: unknown) {
       const message =
         (error as ApiError)?.response?.data?.message ||
-        "Removed failed. Try again.";
+        "Remove failed. Try again.";
       toast.error(message);
     }
   };
@@ -57,14 +57,14 @@ const CartItemCard: React.FC<CartItemCardProps> = ({
         <div className="flex flex-col text-black">
           <span className="font-semibold">{name}</span>
           <span className="text-sm text-gray-600">{price} F CFA</span>
-          <span className="text-xs text-gray-500">Quantité: {quantity}</span>
+          <span className="text-xs text-gray-500">Quantity: {quantity}</span>
         </div>
       </div>
 
       <button
         onClick={handleRemoveCart}
         className="text-red-500 hover:text-red-700"
-        title="Supprimer du panier"
+        title="Remove from cart"
       >
         <Trash2 size={18} />
       </button>

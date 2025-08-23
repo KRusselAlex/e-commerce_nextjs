@@ -6,24 +6,24 @@ import "./globals.css";
 import WhatsappWidget from "@/components/whatsapp/whatsappWidjet";
 
 export const metadata: Metadata = {
-  title: "Store - Produits et Équipements de Laboratoire",
+  title: "Store - Laboratory Products and Equipment",
   description:
-    "Découvrez une large gamme de produits et d'équipements de laboratoire pour la chimie, la physique, la biologie et plus encore. Qualité professionnelle garantie pour vos besoins scientifiques.",
+    "Discover a wide range of laboratory products and equipment for chemistry, physics, biology, and more. Professional quality guaranteed for your scientific needs.",
   icons: "/logo2.png",
 
   keywords: [
-    "produits laboratoire",
-    "équipements chimie",
-    "matériel physique",
-    "fournitures biologie",
-    "consommables laboratoire",
-    "vente instruments scientifiques",
+    "laboratory products",
+    "chemistry equipment",
+    "physics materials",
+    "biology supplies",
+    "laboratory consumables",
+    "scientific instruments sales",
     "Store",
   ],
   openGraph: {
-    title: "A-Space - Vente de Produits et Équipements de Laboratoire",
+    title: "A-Space - Laboratory Products and Equipment Sales",
     description:
-      "Boutique e-commerce spécialisée dans les produits de laboratoire. Commandez vos équipements de chimie, physique, biologie et bien plus en ligne.",
+      "E-commerce store specializing in laboratory products. Order your chemistry, physics, biology equipment, and more online.",
     url: "https://e-commerce-nextjs-lemon.vercel.app",
     siteName: "store",
     images: [
@@ -31,16 +31,16 @@ export const metadata: Metadata = {
         url: "/meta.jpeg",
         width: 1200,
         height: 630,
-        alt: "Store - Produits et Équipements de Laboratoire",
+        alt: "Store - Laboratory Products and Equipment",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Store - Vente de Produits et Équipements de Laboratoire",
+    title: "Store - Laboratory Products and Equipment Sales",
     description:
-      "Commandez vos fournitures et équipements scientifiques en ligne avec A-Space. Qualité et fiabilité au service des laboratoires.",
+      "Order your scientific supplies and equipment online with A-Space. Quality and reliability for laboratories.",
     images: ["/meta.jpg"],
   },
 };

@@ -5,35 +5,35 @@ import {
   FaHeadphonesAlt,
   FaShippingFast,
 } from "react-icons/fa";
-import CardServices from "./card/card"; // Assurez-vous que le chemin est correct
+import CardServices from "./card/card";
 
 const services = [
   {
     icon: <FaMicroscope size={40} />,
-    title: "Équipements de laboratoire",
+    title: "Laboratory Equipment",
     description:
-      "Découvrez des microscopes, centrifugeuses et autres appareils de pointe pour vos besoins scientifiques.",
+      "Discover microscopes, centrifuges, and other advanced devices for your scientific needs.",
     iconColor: "text-green-500",
   },
   {
     icon: <FaFlask size={40} />,
-    title: "Produits chimiques et consommables",
+    title: "Chemicals and Consumables",
     description:
-      "Un large choix de réactifs, verrerie et matériel pour la chimie, la biologie et la physique.",
+      "A wide range of reagents, glassware, and materials for chemistry, biology, and physics.",
     iconColor: "text-yellow-500",
   },
   {
     icon: <FaHeadphonesAlt size={40} />,
-    title: "Service client dédié",
+    title: "Dedicated Customer Service",
     description:
-      "Une question ? Notre équipe support est toujours prête à vous aider, avec des conseils experts.",
+      "Have a question? Our support team is always ready to help you with expert advice.",
     iconColor: "text-blue-500",
   },
   {
     icon: <FaShippingFast size={40} />,
-    title: "Livraison rapide et sécurisée",
+    title: "Fast and Secure Delivery",
     description:
-      "Recevez vos équipements et produits en toute sécurité, où que vous soyez.",
+      "Receive your equipment and products safely, wherever you are.",
     iconColor: "text-red-500",
   },
 ];
@@ -44,13 +44,10 @@ export default function ServicesSection() {
       <div className="flex flex-col lg:flex-row gap-16 mx-auto text-center h-full justify-center max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="lg:w-1/3 text-white text-center lg:text-left">
           <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-6">
-            Store : Votre partenaire en matériel et fournitures de laboratoire
+            Store: Your Partner in Laboratory Equipment and Supplies
           </h2>
           <p className="text-base">
-            Bienvenue chez A&apos;Space, votre boutique en ligne spécialisée
-            dans les produits et équipements de laboratoire. Nous proposons des
-            solutions fiables et de qualité pour les professionnels et
-            passionnés des sciences.
+            Welcome to A&apos;Space, your online store specializing in laboratory products and equipment. We offer reliable, high-quality solutions for professionals and science enthusiasts.
           </p>
         </div>
 

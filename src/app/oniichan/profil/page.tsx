@@ -9,15 +9,15 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Dashboard from "@/components/admin/dashboard";
-import { getUserById, updateUser, deleteUser } from "@/lib/api"; // API functions
+import { getUserById, updateUser, deleteUser } from "@/lib/api";
 import { UserTypes } from "@/types/user";
+import Loading from "@/components/loading/loading";
 
 export default function ProfilePage() {
   const [formData, setFormData] = useState<UserTypes | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // Load user from localStorage and fetch full user details
   useEffect(() => {
     const storedUser =
       typeof window !== "undefined"
@@ -30,7 +30,7 @@ export default function ProfilePage() {
           setFormData(res.data);
         })
         .catch((err) => {
-          console.error("Erreur de récupération du profil", err);
+          console.error("Error fetching profile", err);
         })
         .finally(() => setLoading(false));
     } else {
@@ -50,10 +50,10 @@ export default function ProfilePage() {
       try {
         const res = await updateUser(formData._id.toString(), formData);
         localStorage.setItem("userFeudjo", JSON.stringify(res.data));
-        alert("Profil mis à jour !");
+        alert("Profile updated!");
       } catch (err) {
-        console.error("Erreur de mise à jour", err);
-        alert("Échec de la mise à jour du profil.");
+        console.error("Update error", err);
+        alert("Failed to update profile.");
       }
     }
   };
@@ -61,7 +61,7 @@ export default function ProfilePage() {
   const handleDelete = async () => {
     if (formData && formData._id) {
       const confirm = window.confirm(
-        "Êtes-vous sûr de vouloir supprimer votre compte ?"
+        "Are you sure you want to delete your account?"
       );
       if (confirm) {
         try {
@@ -69,28 +69,32 @@ export default function ProfilePage() {
           localStorage.removeItem("userFeudjo");
           router.push("/auth/login");
         } catch (err) {
-          console.error("Erreur de suppression", err);
-          alert("Échec de la suppression du compte.");
+          console.error("Delete error", err);
+          alert("Failed to delete account.");
         }
       }
     }
   };
 
   if (loading || !formData)
-    return <p className="p-6">Chargement du profil...</p>;
+    return (
+      <div className="flex min-h-screen justify-center bg-primary bg-opacity-5 y-5 items-center">
+        <Loading />
+      </div>
+    );
 
   return (
     <Dashboard>
       <div className="max-w-2xl mx-auto p-6 space-y-6">
         <Card>
           <CardHeader>
-            <h2 className="text-2xl font-bold">Mon Profil</h2>
+            <h2 className="text-2xl font-bold">My Profile</h2>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="info" className="w-full">
               <TabsList className="mb-4">
-                <TabsTrigger value="info">Informations</TabsTrigger>
-                <TabsTrigger value="edit">Modifier</TabsTrigger>
+                <TabsTrigger value="info">Information</TabsTrigger>
+                <TabsTrigger value="edit">Edit</TabsTrigger>
               </TabsList>
 
               {/* Profile Info Tab */}
@@ -109,10 +113,10 @@ export default function ProfilePage() {
                 </div>
                 <div className="space-y-1">
                   <p>
-                    <strong>Téléphone:</strong> {formData.phone}
+                    <strong>Phone:</strong> {formData.phone}
                   </p>
                   <p>
-                    <strong>Adresse:</strong> {formData.address}
+                    <strong>Address:</strong> {formData.address}
                   </p>
                 </div>
                 <Button
@@ -120,7 +124,7 @@ export default function ProfilePage() {
                   className="mt-6"
                   onClick={handleDelete}
                 >
-                  Supprimer le compte
+                  Delete account
                 </Button>
               </TabsContent>
 
@@ -128,7 +132,7 @@ export default function ProfilePage() {
               <TabsContent value="edit">
                 <div className="space-y-4">
                   <div>
-                    <Label>Nom complet</Label>
+                    <Label>Full Name</Label>
                     <Input
                       name="fullName"
                       value={formData.name}
@@ -145,7 +149,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <Label>Téléphone</Label>
+                    <Label>Phone</Label>
                     <Input
                       name="phone"
                       value={formData.phone}
@@ -153,7 +157,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <Label>Adresse</Label>
+                    <Label>Address</Label>
                     <Input
                       name="address"
                       value={formData.address}
@@ -161,16 +165,14 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <Label>URL de l&apos;avatar</Label>
+                    <Label>Avatar URL</Label>
                     <Input
                       name="avatarUrl"
                       value={formData.avatar}
                       onChange={handleChange}
                     />
                   </div>
-                  <Button onClick={handleSubmit}>
-                    Enregistrer les modifications
-                  </Button>
+                  <Button onClick={handleSubmit}>Save changes</Button>
                 </div>
               </TabsContent>
             </Tabs>

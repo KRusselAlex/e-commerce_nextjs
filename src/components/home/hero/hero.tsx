@@ -6,9 +6,8 @@ import Link from "next/link";
 
 const content = {
   title:
-    "Découvrez l’excellence scientifique : votre boutique pour produits et équipements de laboratoire !",
-
-  buttonText: "Commencer maintenant",
+    "Discover Scientific Excellence: Your Shop for Laboratory Products and Equipment!",
+  buttonText: "Start Now",
 };
 
 export default function HeroSection() {

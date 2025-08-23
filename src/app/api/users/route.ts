@@ -42,7 +42,7 @@ export async function POST(request: Request) {
             });
         }
 
-        const { email, password, name } = validationResult.data;
+        const { email, password, name, role } = validationResult.data;
 
         // Check if the user already exists
         const existingUser = await db.collection('users').findOne({ email });
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
             isVerified: true,
             createdAt: new Date(),
             updatedAt: new Date(),
-            role: 'user',
+            role: role,
             status: 'active'
         };
 

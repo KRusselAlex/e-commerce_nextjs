@@ -14,10 +14,10 @@ import { logout } from "@/lib/api";
 import { toast } from "sonner";
 
 const navItems = [
-  { name: "Accueil", href: "/" },
-  { name: "Boutique", href: "/shop" },
-  { name: "À propos de nous", href: "/about" },
-  { name: "Contactez-nous", href: "/contact" },
+  { name: "Home", href: "/" },
+  { name: "Shop", href: "/shop" },
+  { name: "About Us", href: "/about" },
+  { name: "Contact Us", href: "/contact" },
 ];
 
 export default function Navbar() {
@@ -40,11 +40,11 @@ export default function Navbar() {
     try {
       logout(); // clear localStorage
       setIsAuthenticated(false);
-      toast.success("Déconnexion réussie");
+      toast.success("Logout successful");
       router.push("/auth/login");
     } catch (error) {
       console.error("Logout error:", error);
-      toast.error("Erreur lors de la déconnexion");
+      toast.error("Error during logout");
     }
   };
 
@@ -119,7 +119,7 @@ export default function Navbar() {
                           : "hover:text-secondary"
                       }`}
                     >
-                      Mes Commandes
+                      My Orders
                     </Link>
                   </li>
                 ))}
@@ -134,14 +134,14 @@ export default function Navbar() {
                 className="hidden md:block hover:text-secondary text-lg font-medium"
                 prefetch={true}
               >
-                Connexion
+                Login
               </Link>
             ) : (
               <Button
                 className="bg-red-500 text-white hover:bg-red-600 hidden md:block"
                 onClick={handleLogout}
               >
-                Déconnexion
+                Logout
               </Button>
             )}
             <SearchBar />
@@ -204,7 +204,7 @@ export default function Navbar() {
                         : "text-textColor hover:text-primary"
                     }`}
                   >
-                    Mes Commandes
+                    My Orders
                   </Link>
                 </li>
               ))}
@@ -215,7 +215,7 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className="block px-3 py-2 text-textColor hover:text-primary"
                 >
-                  Connexion
+                  Login
                 </Link>
               </li>
             ) : (
@@ -227,7 +227,7 @@ export default function Navbar() {
                   }}
                   className="w-full text-left block px-3 py-2 text-red-600 hover:text-red-800"
                 >
-                  Déconnexion
+                  Logout
                 </button>
               </li>
             )}

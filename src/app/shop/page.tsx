@@ -1,5 +1,4 @@
 "use client";
-"use client";
 
 import Footer from "@/components/footer/footer";
 import Navbar from "@/components/navbar/navbar";
@@ -14,11 +13,11 @@ export default function Shop() {
         <div className="h-12"></div>
         <div className="flex flex-col h-full w-full justify-center  p-2 items-center">
           <h1 className=" text-xl md:text-4xl font-bold text-center mb-4">
-            Catalogue
+            Catalog
           </h1>
           <p className="text-center  mb-8">
-            Découvrez notre sélection de produits de qualité, soigneusement
-            choisis pour répondre à vos besoins et envies.
+            Discover our selection of quality products, carefully chosen to meet
+            your needs and desires.
           </p>
         </div>
       </header>

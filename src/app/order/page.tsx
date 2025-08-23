@@ -18,6 +18,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getOrderByUserId, logout } from "@/lib/api";
 import clsx from "clsx";
+import Loading from "@/components/loading/loading";
 
 type User = {
   id: string;
@@ -70,7 +71,6 @@ export default function OrdersPage() {
     try {
       const res = await getOrderByUserId(userId);
       const ordersData = res.data.data;
-      console.log("Fetched orders:", ordersData);
       setOrders(ordersData);
       setFilteredOrders(ordersData);
     } catch (error) {
@@ -85,7 +85,6 @@ export default function OrdersPage() {
 
   useEffect(() => {
     let filtered = orders.filter((order) => {
-      console.log("Filtering order:", order.referenceId);
       const matchesSearch = order.referenceId
         .toLowerCase()
         .includes(search.toLowerCase());
@@ -123,7 +122,12 @@ export default function OrdersPage() {
       }[status] || "bg-gray-100 text-gray-800"
     );
 
-  if (!user) return <p className="p-6">Chargement du profil...</p>;
+  if (!user)
+    return (
+      <div className="flex min-h-screen justify-center bg-primary bg-opacity-5 y-5 items-center">
+        <Loading />
+      </div>
+    );
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
@@ -133,7 +137,7 @@ export default function OrdersPage() {
           <Button variant="ghost" size="icon" onClick={() => router.back()}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-2xl font-bold">Mon Espace</h1>
+          <h1 className="text-2xl font-bold">My Account</h1>
         </div>
 
         <div className="flex items-center gap-4">
@@ -156,7 +160,7 @@ export default function OrdersPage() {
             onClick={handleLogout}
           >
             <LogOut className="w-4 h-4 mr-1" />
-            Déconnexion
+            Logout
           </Button>
         </div>
       </div>
@@ -166,7 +170,7 @@ export default function OrdersPage() {
         <Link href="/shop">
           <Button className="bg-primary text-white hover:bg-primary/90">
             <ShoppingCart className="w-4 h-4 mr-2" />
-            Aller à la boutique
+            Go to Shop
           </Button>
         </Link>
       </div>
@@ -174,55 +178,55 @@ export default function OrdersPage() {
       {/* Filters */}
       <div className="flex flex-wrap gap-4 mb-4">
         <Input
-          placeholder="Rechercher par référence..."
+          placeholder="Search by reference..."
           className="w-full md:w-64"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-full md:w-48">
-            <SelectValue placeholder="Filtrer par statut" />
+            <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tous</SelectItem>
-            <SelectItem value="pending">En attente</SelectItem>
-            <SelectItem value="processing">En cours</SelectItem>
-            <SelectItem value="shipped">Expédiée</SelectItem>
-            <SelectItem value="delivered">Livrée</SelectItem>
-            <SelectItem value="cancelled">Annulée</SelectItem>
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="processing">Processing</SelectItem>
+            <SelectItem value="shipped">Shipped</SelectItem>
+            <SelectItem value="delivered">Delivered</SelectItem>
+            <SelectItem value="cancelled">Cancelled</SelectItem>
           </SelectContent>
         </Select>
         <Select value={sortBy} onValueChange={setSortBy}>
           <SelectTrigger className="w-full md:w-48">
-            <SelectValue placeholder="Trier par" />
+            <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="date">Date (récent)</SelectItem>
-            <SelectItem value="amount">Montant (élevé)</SelectItem>
+            <SelectItem value="date">Date (recent)</SelectItem>
+            <SelectItem value="amount">Amount (high)</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       {/* Orders */}
       <div>
-        <h2 className="text-xl font-semibold mb-4">Mes Commandes</h2>
+        <h2 className="text-xl font-semibold mb-4">My Orders</h2>
         {filteredOrders.length === 0 ? (
-          <p className="text-muted-foreground">Aucune commande trouvée.</p>
+          <p className="text-muted-foreground">No orders found.</p>
         ) : (
           filteredOrders.map((order) => (
             <Card key={order._id} className="mb-4">
               <CardHeader>
                 <div className="flex justify-between items-center">
                   <CardTitle className="text-lg font-semibold">
-                    Commande {order.referenceId}
+                    Order {order.referenceId}
                   </CardTitle>
                   <span className={statusColor(order.status)}>
                     {order.status}
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Passée le {new Date(order.createdAt).toLocaleDateString()} |
-                  Paiement:{" "}
+                  Placed on {new Date(order.createdAt).toLocaleDateString()} |
+                  Payment:{" "}
                   <span className="capitalize">{order.paymentStatus}</span>
                 </p>
               </CardHeader>

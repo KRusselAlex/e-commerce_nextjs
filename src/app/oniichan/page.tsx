@@ -23,6 +23,7 @@ import { getOrders, getProducts, getUsers, updateOrder } from "@/lib/api";
 import Link from "next/link";
 import OrderTable, { Order } from "@/components/admin/order/OrderTable";
 import { toast } from "sonner";
+import Loading from "@/components/loading/loading";
 
 // Define types
 
@@ -57,9 +58,9 @@ export default function AdminAnalyticsPage() {
         o._id === orderId ? { ...o, status: newStatus } : o
       );
       setOrders(updated);
-      toast.success("Statut mis à jour !");
+      toast.success("Status updated!");
     } catch {
-      toast.error("Échec de la mise à jour");
+      toast.error("Failed to update status");
     }
   };
 
@@ -71,7 +72,6 @@ export default function AdminAnalyticsPage() {
           getProducts(),
           getUsers(),
         ]);
-        console.log("orders", ordersRes.data.data);
         setOrders(ordersRes?.data.data);
         setProducts(productsRes.data.data.products);
         setUsers(usersRes.data.data);
@@ -85,9 +85,12 @@ export default function AdminAnalyticsPage() {
     fetchData();
   }, []);
 
-  if (loading) return <p className="text-center text-gray-500">Loading...</p>;
-
-  console.log("orders", orders);
+  if (loading)
+    return (
+      <div className="flex min-h-screen justify-center bg-primary bg-opacity-5 y-5 items-center">
+        <Loading />
+      </div>
+    );
 
   const bestSelling = products
     .map((p) => ({ name: p.name, sales: p.sales || 0 }))
@@ -126,7 +129,7 @@ export default function AdminAnalyticsPage() {
     <Dashboard>
       <div className="mx-auto max-w-[110em] overflow-x-auto">
         {/* Top KPIs */}
-        <div className="grid  lg:grid-cols-3 gap-6 p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-4 gap-6 p-6">
           <Card>
             <CardHeader>
               <CardTitle>Total Revenue</CardTitle>
@@ -153,6 +156,14 @@ export default function AdminAnalyticsPage() {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">{users.length}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Total Products</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{products.length}</p>
             </CardContent>
           </Card>
         </div>

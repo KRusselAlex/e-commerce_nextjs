@@ -56,10 +56,10 @@ export default function ProductActions({ productId }: Props) {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleView}>Voir</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleEdit}>Modifier</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleView}>More</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
         <DropdownMenuItem onClick={handleDelete} className="text-red-600">
-          Supprimer
+          Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

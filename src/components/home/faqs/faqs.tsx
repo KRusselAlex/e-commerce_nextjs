@@ -9,95 +9,92 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 
-const categories = ["Général", "Compte", "Facturation"] as const;
+const categories = ["General", "Account", "Billing"] as const;
 type Category = (typeof categories)[number];
 
 const faqs: Record<Category, { question: string; answer: string }[]> = {
-  Général: [
+  General: [
     {
-      question: "De quoi s'agit-il sur cette plateforme ?",
-      answer: "Cette plateforme vous aide à gérer vos tâches efficacement.",
+      question: "What is this platform about?",
+      answer: "This platform helps you manage your tasks efficiently.",
     },
     {
-      question: "Comment puis-je contacter le support ?",
-      answer: "Vous pouvez nous contacter via notre page de contact.",
+      question: "How can I contact support?",
+      answer: "You can contact us via our contact page.",
     },
     {
-      question: "De quoi s'agit-il sur cette plateforme ?",
-      answer: "Cette plateforme vous aide à gérer vos tâches efficacement.",
+      question: "What is this platform about?",
+      answer: "This platform helps you manage your tasks efficiently.",
     },
     {
-      question: "Comment puis-je contacter le support ?",
-      answer: "Vous pouvez nous contacter via notre page de contact.",
+      question: "How can I contact support?",
+      answer: "You can contact us via our contact page.",
     },
     {
-      question: "De quoi s'agit-il sur cette plateforme ?",
-      answer: "Cette plateforme vous aide à gérer vos tâches efficacement.",
+      question: "What is this platform about?",
+      answer: "This platform helps you manage your tasks efficiently.",
     },
     {
-      question: "Comment puis-je contacter le support ?",
-      answer: "Vous pouvez nous contacter via notre page de contact.",
-    },
-  ],
-  Compte: [
-    {
-      question: "Comment réinitialiser mon mot de passe ?",
-      answer: "Cliquez sur 'Mot de passe oublié' sur la page de connexion.",
-    },
-    {
-      question: "Puis-je changer mon e-mail ?",
-      answer: "Oui, dans les paramètres du compte.",
-    },
-    {
-      question: "Comment réinitialiser mon mot de passe ?",
-      answer: "Cliquez sur 'Mot de passe oublié' sur la page de connexion.",
-    },
-    {
-      question: "Puis-je changer mon e-mail ?",
-      answer: "Oui, dans les paramètres du compte.",
-    },
-    {
-      question: "Comment réinitialiser mon mot de passe ?",
-      answer: "Cliquez sur 'Mot de passe oublié' sur la page de connexion.",
-    },
-    {
-      question: "Puis-je changer mon e-mail ?",
-      answer: "Oui, dans les paramètres du compte.",
+      question: "How can I contact support?",
+      answer: "You can contact us via our contact page.",
     },
   ],
-  Facturation: [
+  Account: [
     {
-      question: "Quels modes de paiement acceptez-vous ?",
-      answer: "Nous acceptons les cartes de crédit et PayPal.",
+      question: "How do I reset my password?",
+      answer: "Click on 'Forgot password' on the login page.",
     },
     {
-      question: "Puis-je obtenir un remboursement ?",
-      answer:
-        "Les remboursements sont disponibles dans les 14 jours suivant l'achat.",
+      question: "Can I change my email?",
+      answer: "Yes, in the account settings.",
     },
     {
-      question: "Quels modes de paiement acceptez-vous ?",
-      answer: "Nous acceptons les cartes de crédit et PayPal.",
+      question: "How do I reset my password?",
+      answer: "Click on 'Forgot password' on the login page.",
     },
     {
-      question: "Puis-je obtenir un remboursement ?",
-      answer:
-        "Les remboursements sont disponibles dans les 14 jours suivant l'achat.",
+      question: "Can I change my email?",
+      answer: "Yes, in the account settings.",
     },
     {
-      question: "Quels modes de paiement acceptez-vous ?",
-      answer: "Nous acceptons les cartes de crédit et PayPal.",
+      question: "How do I reset my password?",
+      answer: "Click on 'Forgot password' on the login page.",
     },
     {
-      question: "Puis-je obtenir un remboursement ?",
-      answer:
-        "Les remboursements sont disponibles dans les 14 jours suivant l'achat.",
+      question: "Can I change my email?",
+      answer: "Yes, in the account settings.",
+    },
+  ],
+  Billing: [
+    {
+      question: "What payment methods do you accept?",
+      answer: "We accept credit cards and PayPal.",
+    },
+    {
+      question: "Can I get a refund?",
+      answer: "Refunds are available within 14 days of purchase.",
+    },
+    {
+      question: "What payment methods do you accept?",
+      answer: "We accept credit cards and PayPal.",
+    },
+    {
+      question: "Can I get a refund?",
+      answer: "Refunds are available within 14 days of purchase.",
+    },
+    {
+      question: "What payment methods do you accept?",
+      answer: "We accept credit cards and PayPal.",
+    },
+    {
+      question: "Can I get a refund?",
+      answer: "Refunds are available within 14 days of purchase.",
     },
   ],
 };
 
 export default function FAQsSection() {
-  const [selectedCategory, setSelectedCategory] = useState<Category>("Général");
+  const [selectedCategory, setSelectedCategory] = useState<Category>("General");
 
   return (
     <div className="min-h-screen flex flex-col items-col justify-center">

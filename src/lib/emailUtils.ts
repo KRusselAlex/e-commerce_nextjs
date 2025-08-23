@@ -15,7 +15,7 @@ export async function sendVerificationEmail(email: string, token: string) {
     const verificationLink = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/verify-email?token=${token}`;
 
     const mailOptions = {
-        from: `"Feudjeu Corp" <${process.env.EMAIL_USER}>`,
+        from: `"Fiedeu Corp" <${process.env.EMAIL_USER}>`,
         to: email,
         subject: 'Verify Your Email',
         text: `Click the following link to verify your email: ${verificationLink}`,

@@ -10,20 +10,20 @@ import { SiTiktok } from "react-icons/si";
 import Logo from "../logo/logo";
 
 export default function Footer() {
-  const currentDate = new Date().toLocaleDateString("fr-FR", {
+  const currentDate = new Date().toLocaleDateString("en-US", {
     year: "numeric",
   });
 
   const customerServiceItems = [
-    { label: "Retours", href: "/tutorials" },
-    { label: "Livraison", href: "/tutorials" },
+    { label: "Returns", href: "/tutorials" },
+    { label: "Shipping", href: "/tutorials" },
     { label: "FAQs", href: "/tutorials" },
   ];
 
   const supportItems = [
-    { label: "Centre d'aide", href: "/help-center" },
-    { label: "Politique de confidentialité", href: "/privacy-policy" },
-    { label: "Conditions générales", href: "/conditions" },
+    { label: "Help Center", href: "/help-center" },
+    { label: "Privacy Policy", href: "/privacy-policy" },
+    { label: "Terms & Conditions", href: "/conditions" },
   ];
 
   const quickLinksItems = [
@@ -40,13 +40,16 @@ export default function Footer() {
             <Logo />
           </div>
           <div className="py-3">
-            <SelectList header="Service Client" items={customerServiceItems} />
+            <SelectList
+              header="Customer Service"
+              items={customerServiceItems}
+            />
           </div>
           <div className="py-3">
             <SelectList header="Support" items={supportItems} />
           </div>
           <div className="py-3">
-            <SelectList header="Liens rapides" items={quickLinksItems} />
+            <SelectList header="Quick Links" items={quickLinksItems} />
           </div>
         </div>
 
@@ -89,7 +92,7 @@ export default function Footer() {
             </Link>
           </div>
           <div className="mt-5 text-center text-sm">
-            © Copyright {currentDate}. Tous droits réservés K-RUSSEL.
+            © Copyright {currentDate}. All rights reserved K-RUSSEL.
           </div>
         </div>
       </div>

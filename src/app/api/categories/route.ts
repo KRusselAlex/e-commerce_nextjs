@@ -31,10 +31,7 @@ export async function POST(request: NextRequest) {
       .findOne({ name });
 
     if (existingCategory) {
-      return sendResponse(400, false, "Category name must be unique", null, {
-        code: 400,
-        details: `A category with the name "${name}" already exists.`,
-      });
+      throw new Error(`A category with the name "${name}" already exists.`);
     }
 
     console.log(objectId)

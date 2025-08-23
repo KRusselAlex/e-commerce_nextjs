@@ -59,7 +59,8 @@ export default function Product() {
             Product
           </h1>
           <p className="text-center mb-8">
-            Discover the Story Behind A&apos;Space D: Where Anime Meets Fashion
+            Explore Our Range of Laboratory Equipment: Precision Tools for Every
+            Scientist
           </p>
         </div>
       </div>

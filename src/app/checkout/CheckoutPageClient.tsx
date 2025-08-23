@@ -37,7 +37,7 @@ export default function CheckoutPage() {
       try {
         if (mode === "buy-now" && productId) {
           const response = await getProductById(productId);
-          setProduct(response.data as BuyNowProduct); // o
+          setProduct(response.data as BuyNowProduct);
         }
       } catch (err) {
         console.error("Failed to fetch product:", err);
@@ -48,7 +48,7 @@ export default function CheckoutPage() {
   }, [productId, mode]);
 
   if (!user)
-    return <p className="text-center text-red-500 mt-10">Connexion requise.</p>;
+    return <p className="text-center text-red-500 mt-10">Login required.</p>;
 
   return (
     <div className="max-w-6xl mx-auto p-4">
@@ -57,7 +57,7 @@ export default function CheckoutPage() {
         variant="ghost"
         className="flex items-center gap-2 mb-6 text-gray-700 hover:text-black"
       >
-        <ArrowLeft size={18} /> Retour
+        <ArrowLeft size={18} /> Back
       </Button>
 
       <CheckoutForm

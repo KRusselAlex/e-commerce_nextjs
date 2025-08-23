@@ -24,7 +24,14 @@ export async function POST(request: NextRequest) {
         const { email, password } = validationResult.data;
 
         // Find user in DB
-        const user = await db.collection('users').findOne({ email });
+        const user = await db.collection('users').findOne({
+            $or: [
+                { email: email },
+                { name: email }
+            ]
+        });
+
+        console.log("User found:", user);
         if (!user) {
             return sendResponse(404, false, 'User not found', null, {
                 code: 404,

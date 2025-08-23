@@ -85,7 +85,7 @@ export default function DataTableDemo() {
   return (
     <Dashboard>
       <div className="w-full mx-auto max-w-[110em]">
-        <div className="flex items-center py-4">
+        <div className="flex  justify-between items-center py-4">
           <Input
             placeholder="Filtrer par nom..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -94,30 +94,33 @@ export default function DataTableDemo() {
             }
             className="max-w-sm"
           />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                Colonnes <ChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex space-x-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="ml-auto">
+                  Colonnes <ChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button className="text-white ">Add Product</Button>
+          </div>
         </div>
         <div className="rounded-md border">
           <Table>
@@ -144,7 +147,7 @@ export default function DataTableDemo() {
                     colSpan={columns.length}
                     className="text-center py-10"
                   >
-                    Chargement...
+                    Loading...
                   </TableCell>
                 </TableRow>
               ) : table.getRowModel().rows?.length ? (
