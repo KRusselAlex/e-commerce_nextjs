@@ -128,7 +128,7 @@ export default function AboutUs() {
               laboratory with personalized solutions and adapted financing.
             </p>
             <Link
-              href="/catalogue"
+              href="/shop"
               className="bg-white text-primary py-3 px-8 rounded-full font-semibold hover:bg-thirdly hover:text-white transition-all duration-300"
             >
               View the Complete Catalog
