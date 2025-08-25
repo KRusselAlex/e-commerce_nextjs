@@ -42,7 +42,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   return (
-    <div className="flex card items-center border rounded-xl shadow-sm p-2 bg-white hover:shadow-md transition">
+    <div className="flex card items-center border rounded-xl h-24 shadow-sm p-2 bg-white hover:shadow-md transition">
       <Link
         href={`/shop/${id}`}
         passHref

@@ -32,7 +32,7 @@ const SearchBar: React.FC = () => {
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="p-4">
+        <div className="p-4 flex flex-col h-full">
           <button
             onClick={() => setIsOpen(false)}
             className="mb-4 text-gray-600"
@@ -46,23 +46,25 @@ const SearchBar: React.FC = () => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <div className="grid grid-cols-1 gap-4 overflow-hidden h-[75vh] overflow-y-auto">
-            {filteredProducts.map((product) => (
-              <ProductCard
-                key={product._id?.toString() || product.name}
-                name={product.name}
-                price={`${product.price} F CFA`}
-                image={
-                  product?.images && product.images.length > 0
-                    ? product.images[0]
-                    : "/placeholder.jpg"
-                }
-                id={product._id ? product._id.toString() : ""}
-              />
-            ))}
-            {!loading && filteredProducts.length === 0 && (
-              <p className="text-center text-black">No products found.</p>
-            )}
+          <div className="flex-1 overflow-y-auto">
+            <div className="grid grid-cols-1 gap-4">
+              {filteredProducts.map((product) => (
+                <ProductCard
+                  key={product._id?.toString() || product.name}
+                  name={product.name}
+                  price={`${product.price} F CFA`}
+                  image={
+                    product?.images && product.images.length > 0
+                      ? product.images[0]
+                      : "/placeholder.jpg"
+                  }
+                  id={product._id ? product._id.toString() : ""}
+                />
+              ))}
+              {!loading && filteredProducts.length === 0 && (
+                <p className="text-center text-black">No products found.</p>
+              )}
+            </div>
           </div>
         </div>
       </div>
