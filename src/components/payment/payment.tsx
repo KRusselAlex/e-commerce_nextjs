@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+// import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ShieldCheck, Truck, CreditCard, MapPin } from "lucide-react";
@@ -47,7 +47,7 @@ export default function CheckoutForm({
     country: "",
   });
 
-  const [paymentMethod, setPaymentMethod] = useState("mtn");
+  // const [paymentMethod, setPaymentMethod] = useState("mtn");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -88,7 +88,7 @@ export default function CheckoutForm({
 
       if (!res.ok) throw new Error(data.message || "Order failed");
 
-      toast.success(`Order created. Pay with ${paymentMethod.toUpperCase()}`);
+      // toast.success(`Order created. Pay with ${paymentMethod.toUpperCase()}`);
       router.push("/shop");
     } catch (error: unknown) {
       const message =
