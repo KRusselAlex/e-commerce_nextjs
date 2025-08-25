@@ -15,13 +15,13 @@ export default function AboutUs() {
   return (
     <section className="bg-fourthly py-10">
       <div className=" max-w-7xl w-full  mx-auto px-6 text-center">
-        {/* Section Statistiques */}
+        {/* Statistics Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {[
-            { label: "Experts techniques", value: "15+" },
-            { label: "Équipements vendus", value: "10K+" },
-            { label: "Fournisseurs agréés", value: "30+" },
-            { label: "Laboratoires équipés", value: "50K+" },
+            { label: "Technical Experts", value: "15+" },
+            { label: "Equipment Sold", value: "10K+" },
+            { label: "Approved Suppliers", value: "30+" },
+            { label: "Labs Equipped", value: "50K+" },
           ].map((stat, index) => (
             <Card
               key={index}
@@ -37,59 +37,59 @@ export default function AboutUs() {
           ))}
         </div>
 
-        {/* Section À Propos */}
+        {/* About Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12">
-          {/* Colonne de gauche */}
+          {/* Left Column */}
           <div className="text-center md:text-left">
             <Image
               src="/gojod.jpeg"
-              alt="Matériel de laboratoire professionnel"
+              alt="Professional laboratory equipment"
               width={500}
               height={300}
               className="rounded-lg w-full shadow-lg mb-6 h-96 object-cover"
             />
             <p className="text-lg text-gray-700 mb-6">
-              LabTech Solutions fournit des équipements de laboratoire certifiés
-              pour la recherche, l&apos;analyse clinique et le contrôle qualité.
-              Nous proposons des instruments de précision répondant aux normes
-              internationales ISO et CE.
+              LabTech Solutions provides certified laboratory equipment for
+              research, clinical analysis, and quality control. We offer
+              precision instruments that meet international ISO and CE
+              standards.
             </p>
             <h3 className="text-2xl font-semibold text-primary mb-4">
-              Notre Vision
+              Our Vision
             </h3>
             <p className="text-lg text-gray-600 mb-6">
-              Développer une gamme complète de solutions techniques, élargir
-              notre réseau de partenaires fabricants et implanter des centres de
-              démonstration dans les pôles scientifiques majeurs.
+              To develop a complete range of technical solutions, expand our
+              network of manufacturing partners, and establish demonstration
+              centers in major scientific hubs.
             </p>
           </div>
 
-          {/* Colonne de droite */}
+          {/* Right Column */}
           <div className="text-center md:text-left">
             <h3 className="text-3xl font-semibold text-primary mb-4">
-              Notre Engagement
+              Our Commitment
             </h3>
             <p className="text-lg text-gray-600 mb-6">
-              Nous garantissons des équipements avec certifications complètes,
-              des procédures de validation claires et un support technique
-              spécialisé. Notre service SAV intervient sous 24h sur tout le
-              territoire.
+              We guarantee equipment with complete certifications, clear
+              validation procedures, and specialized technical support. Our
+              after-sales service intervenes within 24 hours across the entire
+              territory.
             </p>
             <h3 className="text-2xl font-semibold text-primary mb-4">
-              Notre Expertise
+              Our Expertise
             </h3>
             <p className="text-lg text-gray-600 mb-6">
-              Notre équipe regroupe des ingénieurs en instrumentation, des
-              techniciens qualifiés et des spécialistes en assurance qualité
-              pour vous guider dans le choix de votre matériel.
+              Our team includes instrumentation engineers, qualified
+              technicians, and quality assurance specialists to guide you in
+              choosing your equipment.
             </p>
           </div>
         </div>
 
-        {/* Partenaires techniques */}
+        {/* Technical Partners */}
         <div className="mt-12">
           <h3 className="text-3xl font-semibold text-primary mb-6">
-            Nos Fabricants Partenaires
+            Our Partner Manufacturers
           </h3>
           <Carousel>
             <CarouselContent>
@@ -121,18 +121,17 @@ export default function AboutUs() {
         <div className="mt-12 flex w-full justify-center items-center">
           <div className="p-12 w-full bg-primary rounded-lg shadow-xl">
             <h4 className="text-2xl text-white font-semibold mb-4">
-              Solutions Clés en Main pour Laboratoires
+              Turnkey Solutions for Laboratories
             </h4>
             <p className="text-lg text-white mb-6">
-              Bénéficiez de notre expertise pour l&apos;équipement complet de
-              votre laboratoire avec des solutions personnalisées et des
-              financements adaptés.
+              Benefit from our expertise for the complete equipping of your
+              laboratory with personalized solutions and adapted financing.
             </p>
             <Link
               href="/catalogue"
               className="bg-white text-primary py-3 px-8 rounded-full font-semibold hover:bg-thirdly hover:text-white transition-all duration-300"
             >
-              Voir le Catalogue Complet
+              View the Complete Catalog
             </Link>
           </div>
         </div>
