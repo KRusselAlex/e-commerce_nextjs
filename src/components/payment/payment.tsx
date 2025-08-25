@@ -57,7 +57,7 @@ export default function CheckoutForm({
 
   const handleSubmit = async () => {
     if (!userId) {
-      toast.error("Utilisateur non connecté.");
+      toast.error("User not logged in.");
       return;
     }
 
@@ -86,11 +86,9 @@ export default function CheckoutForm({
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.message || "Échec de la commande");
+      if (!res.ok) throw new Error(data.message || "Order failed");
 
-      toast.success(
-        `Commande créée. Payez avec ${paymentMethod.toUpperCase()}`
-      );
+      toast.success(`Order created. Pay with ${paymentMethod.toUpperCase()}`);
       router.push("/shop");
     } catch (error: unknown) {
       const message =
@@ -107,22 +105,21 @@ export default function CheckoutForm({
       {/* LEFT SIDE - FORM */}
       <div>
         <h1 className="text-3xl font-bold mb-4 text-gray-900">
-          Finalise ta commande !
+          Complete your order!
         </h1>
         <p className="text-gray-600 mb-6">
-          Remplis tes informations de livraison pour recevoir ta commande
-          rapidement.
+          Fill in your shipping information to receive your order quickly.
         </p>
 
         <div className="space-y-4">
           {(
             [
-              { label: "Nom complet", id: "fullName" },
-              { label: "Téléphone", id: "phone" },
-              { label: "Adresse", id: "addressLine" },
-              { label: "Ville", id: "city" },
-              { label: "Code postal", id: "postalCode" },
-              { label: "Pays", id: "country" },
+              { label: "Full Name", id: "fullName" },
+              { label: "Phone", id: "phone" },
+              { label: "Address", id: "addressLine" },
+              { label: "City", id: "city" },
+              { label: "Postal Code", id: "postalCode" },
+              { label: "Country", id: "country" },
             ] as { label: string; id: keyof ShippingAddress }[]
           ).map(({ label, id }) => (
             <div key={id}>
@@ -139,7 +136,16 @@ export default function CheckoutForm({
 
         <div className="mt-6">
           <h2 className="text-lg font-semibold mb-2 flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-green-600" /> Moyen de paiement
+            <CreditCard className="w-5 h-5 text-green-600" /> Payment Method
+          </h2>
+          <div className="bg-yellow-50 border border-yellow-200 rounded p-4 text-yellow-800">
+            Payment methods are currently unavailable. Please contact the vendor
+            directly via WhatsApp to complete your order.
+          </div>
+        </div>
+        {/* <div className="mt-6">
+          <h2 className="text-lg font-semibold mb-2 flex items-center gap-2">
+            <CreditCard className="w-5 h-5 text-green-600" /> Payment Method
           </h2>
           <RadioGroup defaultValue="mtn" onValueChange={setPaymentMethod}>
             <div className="flex items-center space-x-2">
@@ -151,14 +157,14 @@ export default function CheckoutForm({
               <Label htmlFor="orange">Orange Money</Label>
             </div>
           </RadioGroup>
-        </div>
+        </div> */}
 
         <Button
           className="mt-8 w-full text-lg text-white"
           onClick={handleSubmit}
           disabled={loading}
         >
-          {loading ? "Traitement..." : "📦 Commander maintenant"}
+          {loading ? "Processing..." : "📦 Order now"}
         </Button>
       </div>
 
@@ -166,7 +172,7 @@ export default function CheckoutForm({
       <div className="space-y-6">
         <Image
           src="/delivery.jpg"
-          alt="Livraison rapide"
+          alt="Fast delivery"
           width={500}
           height={300}
           className="rounded-lg shadow-md w-full object-cover"
@@ -174,26 +180,26 @@ export default function CheckoutForm({
 
         <div className="bg-green-50 border border-green-200 rounded-xl p-5 shadow">
           <h3 className="text-xl font-bold mb-3 text-green-800">
-            Pourquoi commander chez nous ?
+            Why order with us?
           </h3>
           <ul className="space-y-3 text-gray-700">
             <li className="flex items-center gap-2">
               <Truck className="text-green-600 w-5 h-5" />
-              Livraison rapide dans tout le pays
+              Fast delivery nationwide
             </li>
             <li className="flex items-center gap-2">
               <ShieldCheck className="text-green-600 w-5 h-5" />
-              Paiement 100% sécurisé
+              100% secure payment
             </li>
             <li className="flex items-center gap-2">
               <MapPin className="text-green-600 w-5 h-5" />
-              Suivi de commande en temps réel
+              Real-time order tracking
             </li>
           </ul>
         </div>
 
         <div className="text-center mt-8 text-gray-500 text-sm">
-          En commandant maintenant, vous soutenez une entreprise locale ❤️
+          By ordering now, you support a local business ❤️
         </div>
       </div>
     </div>
