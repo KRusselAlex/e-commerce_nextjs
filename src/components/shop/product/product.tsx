@@ -52,7 +52,7 @@ export default function ProductDetail({ product }: ProductCardProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-6 my-10">
+    <div className="max-w-7xl px-4 md:px-0 mx-auto py-6 my-10">
       {/* Image gallery */}
       <div
         className="cursor-pointer text-xl mb-8 text-white rounded-full bg-primary p-2 shadow-md w-fit hover:bg-gray-700 transition-colors"
@@ -94,9 +94,11 @@ export default function ProductDetail({ product }: ProductCardProps) {
         </div>
 
         {/* Info */}
-        <div className="flex flex-col justify-between gap-6">
+        <div className="flex flex-col justify-center items-center md:justify-between gap-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
+            <h1 className="text-3xl  font-bold text-gray-900">
+              {product.name}
+            </h1>
             <p className="mt-3 text-lg text-gray-600 whitespace-pre-line">
               {product.description}
             </p>

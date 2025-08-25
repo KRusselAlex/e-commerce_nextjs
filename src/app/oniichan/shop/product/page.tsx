@@ -34,6 +34,7 @@ import { ChevronDown } from "lucide-react";
 import Dashboard from "@/components/admin/dashboard";
 import { getProducts } from "@/lib/api"; // ← your API import
 import { toast } from "sonner";
+import Link from "next/link";
 
 export default function DataTableDemo() {
   const [data, setData] = React.useState<ProductTypes[]>([]);
@@ -119,7 +120,10 @@ export default function DataTableDemo() {
                   ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button className="text-white ">Add Product</Button>
+
+            <Link href="/oniichan/shop/add-product">
+              <Button className="text-white ">Add Product</Button>
+            </Link>
           </div>
         </div>
         <div className="rounded-md border">

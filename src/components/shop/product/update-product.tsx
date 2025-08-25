@@ -216,6 +216,15 @@ export default function ProductEditor({ id }: Props) {
             ))}
           </select>
 
+          {/* Display selected category name */}
+          {formData.category && (
+            <div className="mt-2 text-sm text-gray-600">
+              Catégorie sélectionnée :{" "}
+              {categories.find((cat) => cat._id === formData.category)?.name ||
+                "Non trouvée"}
+            </div>
+          )}
+
           <Label htmlFor="stockQuantity">Stock</Label>
           <Input
             name="stockQuantity"
@@ -224,7 +233,11 @@ export default function ProductEditor({ id }: Props) {
             onChange={handleInputChange}
           />
 
-          <Button type="button" onClick={handleUpdate} className="w-full text-white">
+          <Button
+            type="button"
+            onClick={handleUpdate}
+            className="w-full text-white"
+          >
             Mettre à jour
           </Button>
           <Button

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cartStore";
+import './productCard.css'
 
 interface ProductCardProps {
   name: string;
@@ -41,7 +42,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   return (
-    <div className="flex items-center border rounded-xl shadow-sm p-2 bg-white hover:shadow-md transition">
+    <div className="flex card items-center border rounded-xl shadow-sm p-2 bg-white hover:shadow-md transition">
       <Link
         href={`/shop/${id}`}
         passHref

@@ -40,6 +40,10 @@ export default function ShopSection() {
     if (categories.length === 0) fetchCategories();
   }, []);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, category, sortByDate]);
+
   const resetFilters = () => {
     setCategory("Tous");
     setSortByDate("Tous");

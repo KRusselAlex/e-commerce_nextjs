@@ -41,12 +41,12 @@ const SearchBar: React.FC = () => {
           </button>
           <input
             type="text"
-            placeholder="Rechercher un produit..."
+            placeholder="Search for a product..."
             className="w-full border text-black p-2 rounded mb-4"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-4 overflow-hidden h-[75vh] overflow-y-auto">
             {filteredProducts.map((product) => (
               <ProductCard
                 key={product._id?.toString() || product.name}
@@ -61,7 +61,7 @@ const SearchBar: React.FC = () => {
               />
             ))}
             {!loading && filteredProducts.length === 0 && (
-              <p className="text-center text-black">Aucun produit trouvé.</p>
+              <p className="text-center text-black">No products found.</p>
             )}
           </div>
         </div>

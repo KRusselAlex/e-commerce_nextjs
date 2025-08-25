@@ -37,16 +37,20 @@ export default function CreateProductForm() {
   const [uploading, setUploading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchCategoriesFromApi = async () => {
+      setLoading(true);
       try {
         const res = await getCategories();
         console.log(res.data);
-        setCategories(res.data.data);
+        setCategories(res?.data?.data.reverse() || []);
       } catch (error) {
         console.error("Erreur lors du chargement des catégories", error);
         toast.error("Impossible de charger les catégories.");
+      } finally {
+        setLoading(false);
       }
     };
     fetchCategoriesFromApi();
@@ -93,6 +97,7 @@ export default function CreateProductForm() {
   };
 
   const submitProduct = async () => {
+    setLoading(true);
     try {
       const data = {
         name: formData.name,
@@ -109,8 +114,13 @@ export default function CreateProductForm() {
         setProductId(res.data.data._id);
       }
     } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
       console.error("Erreur lors de la création du produit", error);
       toast.error("Échec de la création du produit.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -158,6 +168,7 @@ export default function CreateProductForm() {
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
+                className="h-32"
                 required
               />
             </div>
@@ -207,6 +218,7 @@ export default function CreateProductForm() {
               type="button"
               className="w-full mt-4 text-white"
               onClick={submitProduct}
+              disabled={loading}
             >
               Enregistrer
             </Button>

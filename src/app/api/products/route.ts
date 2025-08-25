@@ -30,12 +30,12 @@ export async function GET(request: Request) {
         const url = new URL(request.url);
         const page = parseInt(url.searchParams.get('page') || '1', 10);
         const limit = parseInt(url.searchParams.get('limit') || '10', 10);
-        const skip = (page - 1) * limit;
+        // const skip = (page - 1) * limit;
 
         const products = await db.collection<ProductDocument>('products')
             .find({})
-            .skip(skip)
-            .limit(limit)
+            // .skip(skip)
+            // .limit(limit)
             .toArray();
 
         const productIds = products.map((product) => product._id);
@@ -101,10 +101,7 @@ export async function POST(request: Request) {
         console.log("exist", existingProduct)
 
         if (existingProduct) {
-            return sendResponse(400, false, "Product name must be unique", null, {
-                code: 400,
-                details: `A product with the name "${ProductName}" already exists.`,
-            });
+            throw new Error(`A product with the name "${ProductName}" already exists.`);
         }
 
         const newProduct: ProductTypes = {

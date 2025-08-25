@@ -68,7 +68,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
             if (!res.ok) throw new Error("Failed to fetch products");
             const data = await res.json();
             console.log("Fetched products:", data.data.products);
-            set({ products: data?.data?.products, loading: false });
+            set({ products: data?.data?.products?.reverse() || [], loading: false });
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : "Unknown error";
             set({ error: errorMessage, loading: false });
