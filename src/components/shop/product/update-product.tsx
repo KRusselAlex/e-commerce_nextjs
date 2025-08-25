@@ -175,13 +175,14 @@ export default function ProductEditor({ id }: Props) {
     <Card className="max-w-6xl mx-auto mt-8 p-6 shadow-xl rounded-2xl">
       <CardContent className="grid md:grid-cols-2 gap-6">
         <form className="space-y-4">
-          <h2 className="text-xl font-semibold"> produit</h2>
+          <h2 className="text-xl font-semibold mb-3"> produit</h2>
 
           <Label htmlFor="name">Nom</Label>
           <Input
             name="name"
             value={formData.name}
             onChange={handleInputChange}
+            className="mb-2"
           />
 
           <Label htmlFor="description">Description</Label>
@@ -189,6 +190,7 @@ export default function ProductEditor({ id }: Props) {
             name="description"
             value={formData.description}
             onChange={handleInputChange}
+            className="mb-2"
           />
 
           <Label htmlFor="price">Prix</Label>
@@ -197,6 +199,7 @@ export default function ProductEditor({ id }: Props) {
             type="number"
             value={formData.price}
             onChange={handleInputChange}
+            className="mb-2"
           />
 
           <Label htmlFor="category">Catégorie</Label>
@@ -204,7 +207,7 @@ export default function ProductEditor({ id }: Props) {
             name="category"
             value={formData.category}
             onChange={handleInputChange}
-            className="w-full border border-gray-300 rounded-md px-3 py-2"
+            className="w-full border border-gray-300 rounded-md px-3 py-2 mb-3"
           >
             <option value="" disabled>
               Sélectionnez une catégorie
@@ -216,21 +219,13 @@ export default function ProductEditor({ id }: Props) {
             ))}
           </select>
 
-          {/* Display selected category name */}
-          {formData.category && (
-            <div className="mt-2 text-sm text-gray-600">
-              Catégorie sélectionnée :{" "}
-              {categories.find((cat) => cat._id === formData.category)?.name ||
-                "Non trouvée"}
-            </div>
-          )}
-
           <Label htmlFor="stockQuantity">Stock</Label>
           <Input
             name="stockQuantity"
             type="number"
             value={formData.stockQuantity}
             onChange={handleInputChange}
+            className="mb-2"
           />
 
           <Button
